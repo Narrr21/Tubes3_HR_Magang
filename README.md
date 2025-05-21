@@ -10,7 +10,7 @@
 ## MAKE GUI
 
 1.  & '.\Qt Designer Setup.exe'
-2.  Install and open file window.ui or make new file for other window
+2.  Install and open file window.ui or make new file for other window (Only once, after install just open normally with search bar)
 3.  To build, enter this : pyuic5 src/ui/window.ui -o src/ui/window.py (replace window with your file)
 
 ## IF do any pip install
