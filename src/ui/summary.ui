@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SummaryWindow</class>
+ <widget class="QDialog" name="SummaryWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CV Summary</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <!-- Header -->
+   <item>
+    <widget class="QLabel" name="lblApplicantName">
+     <property name="text">
+      <string>Applicant Name</string>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   
+   <!-- Content Area -->
+   <item>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>780</width>
+        <height>520</height>
+       </rect>
+      </property>
+      
+      <!-- Personal Information -->
+      <widget class="QGroupBox" name="groupPersonal">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>760</width>
+         <height>120</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Personal Information</string>
+       </property>
+       
+       <widget class="QLabel" name="lblEmail">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>30</y>
+          <width>350</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Email: -</string>
+        </property>
+       </widget>
+       
+       <widget class="QLabel" name="lblPhone">
+        <property name="geometry">
+         <rect>
+          <x>380</x>
+          <y>30</y>
+          <width>350</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Phone: -</string>
+        </property>
+       </widget>
+       
+       <widget class="QLabel" name="lblAddress">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>60</y>
+          <width>710</width>
+          <height>40</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Address: -</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </widget>
+      
+      <!-- Summary Section -->
+      <widget class="QGroupBox" name="groupSummary">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>140</y>
+         <width>760</width>
+         <height>100</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Professional Summary</string>
+       </property>
+       
+       <widget class="QTextEdit" name="textSummary">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>30</y>
+          <width>720</width>
+          <height>60</height>
+         </rect>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </widget>
+      
+      <!-- Skills Section -->
+      <widget class="QGroupBox" name="groupSkills">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>250</y>
+         <width>370</width>
+         <height>200</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Skills</string>
+       </property>
+       
+       <widget class="QListWidget" name="listSkills">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>30</y>
+          <width>330</width>
+          <height>160</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+      
+      <!-- Work Experience Section -->
+      <widget class="QGroupBox" name="groupWorkExperience">
+       <property name="geometry">
+        <rect>
+         <x>390</x>
+         <y>250</y>
+         <width>380</width>
+         <height>200</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Work Experience</string>
+       </property>
+       
+       <widget class="QTextEdit" name="textWorkExperience">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>30</y>
+          <width>340</width>
+          <height>160</height>
+         </rect>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </widget>
+      
+      <!-- Education Section -->
+      <widget class="QGroupBox" name="groupEducation">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>460</y>
+         <width>760</width>
+         <height>120</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Education</string>
+       </property>
+       
+       <widget class="QTextEdit" name="textEducation">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>30</y>
+          <width>720</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+   
+   <!-- Button Layout -->
+   <item>
+    <layout class="QHBoxLayout" name="buttonLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnViewFullCV">
+       <property name="text">
+        <string>View Full CV</string>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>35</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnClose">
+       <property name="text">
+        <string>Close</string>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>80</width>
+         <height>35</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>btnClose</sender>
+   <signal>clicked()</signal>
+   <receiver>SummaryWindow</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>719</x>
+     <y>577</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -1,0 +1,901 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1400</width>
+    <height>900</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1200</width>
+    <height>800</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>CV Search System - Professional Edition</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>icons/app_icon.png</normaloff>icons/app_icon.png</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+/* Main Window Styling */
+QMainWindow {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #f8fafc, stop:1 #e2e8f0);
+}
+
+/* Title Label */
+QLabel#lblTitle {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #4f46e5, stop:1 #7c3aed);
+    color: white;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+/* Group Box Styling */
+QGroupBox {
+    font-weight: bold;
+    font-size: 14px;
+    color: #374151;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    margin-top: 10px;
+    padding-top: 15px;
+    background: white;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 15px;
+    padding: 5px 15px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #4f46e5, stop:1 #7c3aed);
+    color: white;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+/* Upload Group Styling */
+QGroupBox#groupUpload {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #fef7ff, stop:1 #f3e8ff);
+    border: 2px solid #c084fc;
+}
+
+/* Search Group Styling */
+QGroupBox#groupSearch {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #eff6ff, stop:1 #dbeafe);
+    border: 2px solid #60a5fa;
+}
+
+/* Database Group Styling */
+QGroupBox#groupDatabaseInfo {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #f0fdf4, stop:1 #dcfce7);
+    border: 2px solid #4ade80;
+}
+
+/* Results Group Styling */
+QGroupBox#groupResults {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #fefce8, stop:1 #fef3c7);
+    border: 2px solid #fbbf24;
+}
+
+/* Button Styling */
+QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #6366f1, stop:1 #4f46e5);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #5855eb, stop:1 #4338ca);
+}
+
+QPushButton:pressed {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #4338ca, stop:1 #3730a3);
+}
+
+QPushButton:disabled {
+    background: #9ca3af;
+    color: #6b7280;
+}
+
+/* Browse Button */
+QPushButton#btnBrowse {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #10b981, stop:1 #059669);
+}
+
+QPushButton#btnBrowse:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #059669, stop:1 #047857);
+}
+
+/* Upload Button */
+QPushButton#btnUpload {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #8b5cf6, stop:1 #7c3aed);
+}
+
+QPushButton#btnUpload:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7c3aed, stop:1 #6d28d9);
+}
+
+/* Clear Button */
+QPushButton#btnClear {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ef4444, stop:1 #dc2626);
+}
+
+QPushButton#btnClear:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #dc2626, stop:1 #b91c1c);
+}
+
+/* Input Fields */
+QLineEdit {
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    background: white;
+}
+
+QLineEdit:focus {
+    border-color: #6366f1;
+    outline: none;
+}
+
+QLineEdit:read-only {
+    background: #f9fafb;
+    color: #6b7280;
+}
+
+/* Spin Box */
+QSpinBox {
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 5px;
+    background: white;
+    font-size: 13px;
+}
+
+QSpinBox:focus {
+    border-color: #6366f1;
+}
+
+/* Radio Buttons */
+QRadioButton {
+    font-size: 13px;
+    color: #374151;
+    spacing: 8px;
+}
+
+QRadioButton::indicator {
+    width: 18px;
+    height: 18px;
+}
+
+QRadioButton::indicator:unchecked {
+    border: 2px solid #d1d5db;
+    border-radius: 9px;
+    background: white;
+}
+
+QRadioButton::indicator:checked {
+    border: 2px solid #6366f1;
+    border-radius: 9px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #6366f1, stop:1 #4f46e5);
+}
+
+/* List Widgets */
+QListWidget {
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
+    alternate-background-color: #f9fafb;
+    selection-background-color: #6366f1;
+    selection-color: white;
+    font-size: 13px;
+}
+
+QListWidget::item {
+    padding: 8px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+QListWidget::item:hover {
+    background: #f3f4f6;
+}
+
+QListWidget::item:selected {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #6366f1, stop:1 #4f46e5);
+}
+
+/* Labels */
+QLabel {
+    color: #374151;
+    font-size: 13px;
+}
+
+QLabel#lblPerformanceTitle {
+    color: #059669;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Menu Bar */
+QMenuBar {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #1f2937, stop:1 #111827);
+    color: white;
+    border: none;
+    padding: 2px;
+}
+
+QMenuBar::item {
+    background: transparent;
+    padding: 8px 16px;
+    border-radius: 4px;
+    margin: 2px;
+}
+
+QMenuBar::item:selected {
+    background: #374151;
+}
+
+QMenu {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+QMenu::item {
+    padding: 8px 20px;
+    border-radius: 4px;
+}
+
+QMenu::item:selected {
+    background: #f3f4f6;
+}
+
+/* Status Bar */
+QStatusBar {
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    color: #6b7280;
+}
+   </string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="lblTitle">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>1360</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>-1</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>🔍 Masih HR Magang ? Anda datang ke tempat yang tepat</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupUpload">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>90</y>
+      <width>670</width>
+      <height>120</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>📤 Upload CV</string>
+    </property>
+    <widget class="QLineEdit" name="lineEditFilePath">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>420</width>
+       <height>35</height>
+      </rect>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="placeholderText">
+      <string>📄 Select PDF file to upload...</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnBrowse">
+     <property name="geometry">
+      <rect>
+       <x>450</x>
+       <y>40</y>
+       <width>100</width>
+       <height>35</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>📂 Browse</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnUpload">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>560</x>
+       <y>40</y>
+       <width>100</width>
+       <height>35</height>
+      </rect>
+     </property>
+     <property name="mouseTracking">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>⬆️ Upload</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblUploadStatus">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>85</y>
+       <width>640</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #6b7280; font-style: italic;</string>
+     </property>
+     <property name="text">
+      <string>💡 Tip: Supported formats: PDF, DOC, DOCX</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupSearch">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>230</y>
+      <width>670</width>
+      <height>200</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>🔍 Search Configuration</string>
+    </property>
+    <widget class="QLabel" name="lblKeywords">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>35</y>
+       <width>100</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>🏷️ Keywords:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="inputKeywords">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>35</y>
+       <width>400</width>
+       <height>35</height>
+      </rect>
+     </property>
+     <property name="placeholderText">
+      <string>Enter search keywords (separated by comma)</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnSearch">
+     <property name="geometry">
+      <rect>
+       <x>540</x>
+       <y>35</y>
+       <width>120</width>
+       <height>35</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>🔍 Search</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblAlgorithm">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>85</y>
+       <width>100</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>⚙️ Algorithm:</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioKMP">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>85</y>
+       <width>95</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>KMP</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioBoyerMoore">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>85</y>
+       <width>130</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Boyer-Moore</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioAhoCorasick">
+     <property name="geometry">
+      <rect>
+       <x>385</x>
+       <y>85</y>
+       <width>130</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Aho-Corasick</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblResultLimit">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>125</y>
+       <width>100</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>📊 Results:</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinResultLimit">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>125</y>
+       <width>80</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>100</number>
+     </property>
+     <property name="value">
+      <number>10</number>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnClear">
+     <property name="geometry">
+      <rect>
+       <x>540</x>
+       <y>125</y>
+       <width>120</width>
+       <height>35</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>🗑️ Clear</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupDatabaseInfo">
+    <property name="geometry">
+     <rect>
+      <x>710</x>
+      <y>90</y>
+      <width>670</width>
+      <height>340</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>💾 Database Information</string>
+    </property>
+    <widget class="QLabel" name="lblTotalCVs">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>35</y>
+       <width>300</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font-weight: bold; color: #059669;</string>
+     </property>
+     <property name="text">
+      <string>📁 Total CVs in Database: 0</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblLastUpload">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>65</y>
+       <width>400</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>⏰ Last Upload: Never</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblRecentCVs">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>105</y>
+       <width>200</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>-1</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>📋 Recent CVs:</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="listRecentCVs">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>135</y>
+       <width>630</width>
+       <height>180</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupResults">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>450</y>
+      <width>1360</width>
+      <height>380</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>📈 Search Results</string>
+    </property>
+    <widget class="QListWidget" name="listResults">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>35</y>
+       <width>900</width>
+       <height>320</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnViewSummary">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>940</x>
+       <y>50</y>
+       <width>140</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>📄 View Summary</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnViewCV">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>940</x>
+       <y>100</y>
+       <width>140</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>👁️ View Full CV</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btnExportResults">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>940</x>
+       <y>150</y>
+       <width>140</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>💾 Export Results</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblPerformanceTitle">
+     <property name="geometry">
+      <rect>
+       <x>1100</x>
+       <y>50</y>
+       <width>200</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>-1</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>⚡ Performance Metrics:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblExactMatchTime">
+     <property name="geometry">
+      <rect>
+       <x>1100</x>
+       <y>80</y>
+       <width>240</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>🎯 Exact Match: - ms</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblFuzzyMatchTime">
+     <property name="geometry">
+      <rect>
+       <x>1100</x>
+       <y>110</y>
+       <width>240</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>🔍 Fuzzy Match: - ms</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lblTotalResults">
+     <property name="geometry">
+      <rect>
+       <x>1100</x>
+       <y>140</y>
+       <width>240</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>📊 Total Results: 0</string>
+     </property>
+    </widget>
+    <widget class="QProgressBar" name="progressBar">
+     <property name="geometry">
+      <rect>
+       <x>1100</x>
+       <y>180</y>
+       <width>240</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">
+QProgressBar {
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: #f9fafb;
+}
+
+QProgressBar::chunk {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #10b981, stop:1 #059669);
+    border-radius: 10px;
+}
+      </string>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+     <property name="textVisible">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1400</width>
+     <height>45</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>📁 File</string>
+    </property>
+    <addaction name="actionUploadCV"/>
+    <addaction name="actionExportResults"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuSearch">
+    <property name="title">
+     <string>🔍 Search</string>
+    </property>
+    <addaction name="actionNewSearch"/>
+    <addaction name="actionClearResults"/>
+    <addaction name="separator"/>
+    <addaction name="actionSearchSettings"/>
+   </widget>
+   <widget class="QMenu" name="menuDatabase">
+    <property name="title">
+     <string>💾 Database</string>
+    </property>
+    <addaction name="actionRefreshDatabase"/>
+    <addaction name="actionDatabaseStats"/>
+    <addaction name="separator"/>
+    <addaction name="actionClearDatabase"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>❓ Help</string>
+    </property>
+    <addaction name="actionUserGuide"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuSearch"/>
+   <addaction name="menuDatabase"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar">
+   <widget class="QLabel" name="lblStatus">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>5</y>
+      <width>200</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>✅ Ready - System Initialized</string>
+    </property>
+   </widget>
+  </widget>
+  <action name="actionUploadCV">
+   <property name="text">
+    <string>📤 Upload CV</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionExportResults">
+   <property name="text">
+    <string>💾 Export Results</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>🚪 Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionNewSearch">
+   <property name="text">
+    <string>🆕 New Search</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionClearResults">
+   <property name="text">
+    <string>🗑️ Clear Results</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionSearchSettings">
+   <property name="text">
+    <string>⚙️ Search Settings</string>
+   </property>
+  </action>
+  <action name="actionRefreshDatabase">
+   <property name="text">
+    <string>🔄 Refresh Database</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionDatabaseStats">
+   <property name="text">
+    <string>📈 Database Statistics</string>
+   </property>
+  </action>
+  <action name="actionClearDatabase">
+   <property name="text">
+    <string>🗑️ Clear Database</string>
+   </property>
+  </action>
+  <action name="actionUserGuide">
+   <property name="text">
+    <string>📖 User Guide</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>ℹ️ About</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
