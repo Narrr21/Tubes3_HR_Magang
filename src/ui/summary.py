@@ -14,71 +14,304 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_SummaryWindow(object):
     def setupUi(self, SummaryWindow):
         SummaryWindow.setObjectName("SummaryWindow")
-        SummaryWindow.resize(800, 600)
+        SummaryWindow.resize(800, 650)
         SummaryWindow.setModal(True)
+        SummaryWindow.setStyleSheet("\n"
+"/* Main Window Styling - Adapted for QDialog */\n"
+"QDialog {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #f8fafc, stop:1 #e2e8f0);\n"
+"    font-family: \'Segoe UI\', sans-serif;\n"
+"}\n"
+"\n"
+"/* Header Labels (like Applicant Name) */\n"
+"QLabel#lblApplicantName {\n"
+"    background: transparent; /* No specific gradient for the label itself */\n"
+"    color: #2c3e50; /* Dark blue-grey for name */\n"
+"    font-weight: bold;\n"
+"    font-size: 20px;\n"
+"    padding: 0; /* Remove padding from previous style if any */\n"
+"}\n"
+"\n"
+"QLabel#lblProfilePicture { /* New QLabel for image */\n"
+"    border-radius: 40px; /* Makes it round (half of width/height 80px) */\n"
+"    border: 2px solid #a0a0a0; /* Subtle border */\n"
+"    background-color: #e0e0e0; /* Placeholder background */\n"
+"}\n"
+"\n"
+"/* Group Box Styling */\n"
+"QGroupBox {\n"
+"    font-weight: bold;\n"
+"    font-size: 14px;\n"
+"    color: #374151;\n"
+"    border: 2px solid #e5e7eb;\n"
+"    border-radius: 12px;\n"
+"    margin-top: 10px;\n"
+"    padding-top: 15px;\n"
+"    background: white;\n"
+"}\n"
+"\n"
+"QGroupBox::title {\n"
+"    subcontrol-origin: margin;\n"
+"    left: 15px;\n"
+"    padding: 5px 15px;\n"
+"    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #4f46e5, stop:1 #7c3aed); /* Purple gradient */\n"
+"    color: white;\n"
+"    border-radius: 8px;\n"
+"    font-size: 13px;\n"
+"}\n"
+"\n"
+"/* Specific Group Box Styles (similar to MainWindow) */\n"
+"QGroupBox#groupPersonal {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #eff6ff, stop:1 #dbeafe); /* Blue tint for Personal */\n"
+"    border: 2px solid #60a5fa;\n"
+"}\n"
+"\n"
+"QGroupBox#groupSummary {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #fef7ff, stop:1 #f3e8ff); /* Purple tint for Summary */\n"
+"    border: 2px solid #c084fc;\n"
+"}\n"
+"\n"
+"QGroupBox#groupSkills {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #f0fdf4, stop:1 #dcfce7); /* Green tint for Skills */\n"
+"    border: 2px solid #4ade80;\n"
+"}\n"
+"\n"
+"QGroupBox#groupWorkExperience {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #fefce8, stop:1 #fef3c7); /* Yellow tint for Work Experience */\n"
+"    border: 2px solid #fbbf24;\n"
+"}\n"
+"\n"
+"QGroupBox#groupEducation {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffe4e6, stop:1 #fecdd3); /* Pink tint for Education */\n"
+"    border: 2px solid #fb7185;\n"
+"}\n"
+"\n"
+"\n"
+"/* Labels */\n"
+"QLabel {\n"
+"    color: #374151;\n"
+"    font-size: 13px;\n"
+"}\n"
+"\n"
+"/* Input Fields (QTextEdit is like a multi-line QLineEdit) */\n"
+"QTextEdit[readOnly=\"true\"], QListWidget {\n"
+"    border: 2px solid #e5e7eb;\n"
+"    border-radius: 8px;\n"
+"    padding: 8px 12px;\n"
+"    font-size: 13px;\n"
+"    background: white;\n"
+"    color: #374151; /* Darker text */\n"
+"}\n"
+"\n"
+"QTextEdit[readOnly=\"true\"]:focus, QListWidget:focus {\n"
+"    border-color: #6366f1; /* Consistent focus color */\n"
+"    outline: none;\n"
+"}\n"
+"\n"
+"QTextEdit[readOnly=\"true\"] {\n"
+"    background: #f9fafb; /* Slightly off-white for read-only */\n"
+"    color: #6b7280; /* Greyer text for read-only */\n"
+"}\n"
+"\n"
+"/* List Widgets */\n"
+"QListWidget {\n"
+"    alternate-background-color: #f9fafb;\n"
+"    selection-background-color: #6366f1;\n"
+"    selection-color: white;\n"
+"}\n"
+"\n"
+"QListWidget::item {\n"
+"    padding: 8px;\n"
+"    border-bottom: 1px solid #f3f4f6;\n"
+"}\n"
+"\n"
+"QListWidget::item:hover {\n"
+"    background: #f3f4f6;\n"
+"}\n"
+"\n"
+"QListWidget::item:selected {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #6366f1, stop:1 #4f46e5);\n"
+"}\n"
+"\n"
+"/* Buttons */\n"
+"QPushButton {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #6366f1, stop:1 #4f46e5); /* Main button gradient */\n"
+"    color: white;\n"
+"    border: none;\n"
+"    border-radius: 8px;\n"
+"    padding: 8px 16px;\n"
+"    font-weight: bold;\n"
+"    font-size: 12px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #5855eb, stop:1 #4338ca);\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #4338ca, stop:1 #3730a3);\n"
+"}\n"
+"\n"
+"QPushButton:disabled {\n"
+"    background: #9ca3af;\n"
+"    color: #6b7280;\n"
+"}\n"
+"\n"
+"/* Specific button styles */\n"
+"QPushButton#btnViewFullCV {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #10b981, stop:1 #059669); /* Green for View Full CV */\n"
+"}\n"
+"QPushButton#btnViewFullCV:hover {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #059669, stop:1 #047857);\n"
+"}\n"
+"\n"
+"QPushButton#btnClose {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ef4444, stop:1 #dc2626); /* Red for Close */\n"
+"}\n"
+"QPushButton#btnClose:hover {\n"
+"    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #dc2626, stop:1 #b91c1c);\n"
+"}\n"
+"\n"
+"/* Scrollbar Styling - Re-used from MainWindow */\n"
+"QScrollBar:vertical {\n"
+"    border: 1px solid #d0d0d0;\n"
+"    background: #f5f5f5;\n"
+"    width: 10px;\n"
+"    margin: 0px 0px 0px 0px;\n"
+"    border-radius: 5px;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical {\n"
+"    background: #a0a0a0;\n"
+"    min-height: 20px;\n"
+"    border-radius: 5px;\n"
+"}\n"
+"\n"
+"QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {\n"
+"    border: none;\n"
+"    background: none;\n"
+"}\n"
+"\n"
+"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {\n"
+"    background: none;\n"
+"}\n"
+"\n"
+"QScrollArea {\n"
+"    border: none;\n"
+"    background-color: transparent;\n"
+"}\n"
+"\n"
+"QScrollArea > QWidget {\n"
+"    background-color: transparent;\n"
+"}\n"
+"   ")
         self.verticalLayout = QtWidgets.QVBoxLayout(SummaryWindow)
         self.verticalLayout.setObjectName("verticalLayout")
+        self.headerLayout = QtWidgets.QHBoxLayout()
+        self.headerLayout.setContentsMargins(20, 20, 20, 10)
+        self.headerLayout.setSpacing(10)
+        self.headerLayout.setObjectName("headerLayout")
+        self.lblProfilePicture = QtWidgets.QLabel(SummaryWindow)
+        self.lblProfilePicture.setMinimumSize(QtCore.QSize(80, 80))
+        self.lblProfilePicture.setMaximumSize(QtCore.QSize(80, 80))
+        self.lblProfilePicture.setText("")
+        self.lblProfilePicture.setPixmap(QtGui.QPixmap("src/ui\\icons/default_profile.png"))
+        self.lblProfilePicture.setScaledContents(True)
+        self.lblProfilePicture.setAlignment(QtCore.Qt.AlignCenter)
+        self.lblProfilePicture.setObjectName("lblProfilePicture")
+        self.headerLayout.addWidget(self.lblProfilePicture)
         self.lblApplicantName = QtWidgets.QLabel(SummaryWindow)
         font = QtGui.QFont()
-        font.setPointSize(16)
+        font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
         self.lblApplicantName.setFont(font)
-        self.lblApplicantName.setAlignment(QtCore.Qt.AlignCenter)
+        self.lblApplicantName.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.lblApplicantName.setObjectName("lblApplicantName")
-        self.verticalLayout.addWidget(self.lblApplicantName)
+        self.headerLayout.addWidget(self.lblApplicantName)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.headerLayout.addItem(spacerItem)
+        self.verticalLayout.addLayout(self.headerLayout)
         self.scrollArea = QtWidgets.QScrollArea(SummaryWindow)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 780, 520))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 780, 550))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.scrollAreaVLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.scrollAreaVLayout.setContentsMargins(10, 10, 10, 10)
+        self.scrollAreaVLayout.setSpacing(15)
+        self.scrollAreaVLayout.setObjectName("scrollAreaVLayout")
         self.groupPersonal = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
-        self.groupPersonal.setGeometry(QtCore.QRect(10, 10, 760, 120))
         self.groupPersonal.setObjectName("groupPersonal")
+        self.personalGridLayout = QtWidgets.QGridLayout(self.groupPersonal)
+        self.personalGridLayout.setContentsMargins(15, 15, 15, 15)
+        self.personalGridLayout.setVerticalSpacing(5)
+        self.personalGridLayout.setObjectName("personalGridLayout")
         self.lblEmail = QtWidgets.QLabel(self.groupPersonal)
-        self.lblEmail.setGeometry(QtCore.QRect(20, 30, 350, 20))
         self.lblEmail.setObjectName("lblEmail")
+        self.personalGridLayout.addWidget(self.lblEmail, 0, 0, 1, 1)
         self.lblPhone = QtWidgets.QLabel(self.groupPersonal)
-        self.lblPhone.setGeometry(QtCore.QRect(380, 30, 350, 20))
         self.lblPhone.setObjectName("lblPhone")
+        self.personalGridLayout.addWidget(self.lblPhone, 0, 1, 1, 1)
         self.lblAddress = QtWidgets.QLabel(self.groupPersonal)
-        self.lblAddress.setGeometry(QtCore.QRect(20, 60, 710, 40))
         self.lblAddress.setWordWrap(True)
         self.lblAddress.setObjectName("lblAddress")
+        self.personalGridLayout.addWidget(self.lblAddress, 1, 0, 1, 2)
+        self.scrollAreaVLayout.addWidget(self.groupPersonal)
         self.groupSummary = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
-        self.groupSummary.setGeometry(QtCore.QRect(10, 140, 760, 100))
         self.groupSummary.setObjectName("groupSummary")
+        self.summaryVLayout = QtWidgets.QVBoxLayout(self.groupSummary)
+        self.summaryVLayout.setContentsMargins(15, 15, 15, 15)
+        self.summaryVLayout.setObjectName("summaryVLayout")
         self.textSummary = QtWidgets.QTextEdit(self.groupSummary)
-        self.textSummary.setGeometry(QtCore.QRect(20, 30, 720, 60))
         self.textSummary.setReadOnly(True)
         self.textSummary.setObjectName("textSummary")
+        self.summaryVLayout.addWidget(self.textSummary)
+        self.scrollAreaVLayout.addWidget(self.groupSummary)
+        self.skillsWorkLayout = QtWidgets.QHBoxLayout()
+        self.skillsWorkLayout.setSpacing(15)
+        self.skillsWorkLayout.setObjectName("skillsWorkLayout")
         self.groupSkills = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
-        self.groupSkills.setGeometry(QtCore.QRect(10, 250, 370, 200))
         self.groupSkills.setObjectName("groupSkills")
+        self.skillsVLayout = QtWidgets.QVBoxLayout(self.groupSkills)
+        self.skillsVLayout.setContentsMargins(15, 15, 15, 15)
+        self.skillsVLayout.setObjectName("skillsVLayout")
         self.listSkills = QtWidgets.QListWidget(self.groupSkills)
-        self.listSkills.setGeometry(QtCore.QRect(20, 30, 330, 160))
         self.listSkills.setObjectName("listSkills")
+        self.skillsVLayout.addWidget(self.listSkills)
+        self.skillsWorkLayout.addWidget(self.groupSkills)
         self.groupWorkExperience = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
-        self.groupWorkExperience.setGeometry(QtCore.QRect(390, 250, 380, 200))
         self.groupWorkExperience.setObjectName("groupWorkExperience")
+        self.workExperienceVLayout = QtWidgets.QVBoxLayout(self.groupWorkExperience)
+        self.workExperienceVLayout.setContentsMargins(15, 15, 15, 15)
+        self.workExperienceVLayout.setObjectName("workExperienceVLayout")
         self.textWorkExperience = QtWidgets.QTextEdit(self.groupWorkExperience)
-        self.textWorkExperience.setGeometry(QtCore.QRect(20, 30, 340, 160))
         self.textWorkExperience.setReadOnly(True)
         self.textWorkExperience.setObjectName("textWorkExperience")
+        self.workExperienceVLayout.addWidget(self.textWorkExperience)
+        self.skillsWorkLayout.addWidget(self.groupWorkExperience)
+        self.scrollAreaVLayout.addLayout(self.skillsWorkLayout)
         self.groupEducation = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
-        self.groupEducation.setGeometry(QtCore.QRect(10, 460, 760, 120))
         self.groupEducation.setObjectName("groupEducation")
+        self.educationVLayout = QtWidgets.QVBoxLayout(self.groupEducation)
+        self.educationVLayout.setContentsMargins(15, 15, 15, 15)
+        self.educationVLayout.setObjectName("educationVLayout")
         self.textEducation = QtWidgets.QTextEdit(self.groupEducation)
-        self.textEducation.setGeometry(QtCore.QRect(20, 30, 720, 80))
         self.textEducation.setReadOnly(True)
         self.textEducation.setObjectName("textEducation")
+        self.educationVLayout.addWidget(self.textEducation)
+        self.scrollAreaVLayout.addWidget(self.groupEducation)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.scrollAreaVLayout.addItem(spacerItem1)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout.addWidget(self.scrollArea)
         self.buttonLayout = QtWidgets.QHBoxLayout()
+        self.buttonLayout.setContentsMargins(20, 5, 20, 10)
+        self.buttonLayout.setSpacing(10)
         self.buttonLayout.setObjectName("buttonLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.buttonLayout.addItem(spacerItem)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.buttonLayout.addItem(spacerItem2)
         self.btnViewFullCV = QtWidgets.QPushButton(SummaryWindow)
         self.btnViewFullCV.setMinimumSize(QtCore.QSize(120, 35))
         self.btnViewFullCV.setObjectName("btnViewFullCV")
@@ -102,8 +335,11 @@ class Ui_SummaryWindow(object):
         self.lblPhone.setText(_translate("SummaryWindow", "Phone: -"))
         self.lblAddress.setText(_translate("SummaryWindow", "Address: -"))
         self.groupSummary.setTitle(_translate("SummaryWindow", "Professional Summary"))
+        self.textSummary.setPlaceholderText(_translate("SummaryWindow", "A concise summary of your professional skills and experience."))
         self.groupSkills.setTitle(_translate("SummaryWindow", "Skills"))
         self.groupWorkExperience.setTitle(_translate("SummaryWindow", "Work Experience"))
+        self.textWorkExperience.setPlaceholderText(_translate("SummaryWindow", "List your relevant work experience here, including roles, companies, and dates."))
         self.groupEducation.setTitle(_translate("SummaryWindow", "Education"))
-        self.btnViewFullCV.setText(_translate("SummaryWindow", "View Full CV"))
-        self.btnClose.setText(_translate("SummaryWindow", "Close"))
+        self.textEducation.setPlaceholderText(_translate("SummaryWindow", "Summarize your educational background, degrees, and institutions."))
+        self.btnViewFullCV.setText(_translate("SummaryWindow", "📄 View Full CV"))
+        self.btnClose.setText(_translate("SummaryWindow", "🚪 Close"))

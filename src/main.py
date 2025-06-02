@@ -1,9 +1,17 @@
 import sys
 import os
 from datetime import datetime
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QFileDialog, QDialog
 from ui.home import Ui_MainWindow
+from ui.summary import Ui_SummaryWindow  # Assuming you have a separate summary UI file
 # from db import get_connection  # Uncomment and implement when ready
+
+class SummaryWindow(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.ui = Ui_SummaryWindow()
+        self.ui.setupUi(self)
+        self.setWindowTitle("Search Summary")
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -183,6 +191,10 @@ class MainWindow(QMainWindow):
         selected = self.get_selected_result()
         if selected:
             QMessageBox.information(self, "Summary", f"Showing summary for:\n{selected}")
+
+            # Open a new summary window
+            summary_window = SummaryWindow(self)
+            summary_window.show()
         else:
             QMessageBox.warning(self, "No Selection", "Please select a result first.")
 

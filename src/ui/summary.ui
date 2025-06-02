@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,28 +16,274 @@
   <property name="modal">
    <bool>true</bool>
   </property>
-  
+  <property name="styleSheet">
+   <string notr="true">
+/* Main Window Styling - Adapted for QDialog */
+QDialog {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #f8fafc, stop:1 #e2e8f0);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Header Labels (like Applicant Name) */
+QLabel#lblApplicantName {
+    background: transparent; /* No specific gradient for the label itself */
+    color: #2c3e50; /* Dark blue-grey for name */
+    font-weight: bold;
+    font-size: 20px;
+    padding: 0; /* Remove padding from previous style if any */
+}
+
+QLabel#lblProfilePicture { /* New QLabel for image */
+    border-radius: 40px; /* Makes it round (half of width/height 80px) */
+    border: 2px solid #a0a0a0; /* Subtle border */
+    background-color: #e0e0e0; /* Placeholder background */
+}
+
+/* Group Box Styling */
+QGroupBox {
+    font-weight: bold;
+    font-size: 14px;
+    color: #374151;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    margin-top: 10px;
+    padding-top: 15px;
+    background: white;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 15px;
+    padding: 5px 15px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #4f46e5, stop:1 #7c3aed); /* Purple gradient */
+    color: white;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+/* Specific Group Box Styles (similar to MainWindow) */
+QGroupBox#groupPersonal {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #eff6ff, stop:1 #dbeafe); /* Blue tint for Personal */
+    border: 2px solid #60a5fa;
+}
+
+QGroupBox#groupSummary {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #fef7ff, stop:1 #f3e8ff); /* Purple tint for Summary */
+    border: 2px solid #c084fc;
+}
+
+QGroupBox#groupSkills {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #f0fdf4, stop:1 #dcfce7); /* Green tint for Skills */
+    border: 2px solid #4ade80;
+}
+
+QGroupBox#groupWorkExperience {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #fefce8, stop:1 #fef3c7); /* Yellow tint for Work Experience */
+    border: 2px solid #fbbf24;
+}
+
+QGroupBox#groupEducation {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ffe4e6, stop:1 #fecdd3); /* Pink tint for Education */
+    border: 2px solid #fb7185;
+}
+
+
+/* Labels */
+QLabel {
+    color: #374151;
+    font-size: 13px;
+}
+
+/* Input Fields (QTextEdit is like a multi-line QLineEdit) */
+QTextEdit[readOnly=&quot;true&quot;], QListWidget {
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    background: white;
+    color: #374151; /* Darker text */
+}
+
+QTextEdit[readOnly=&quot;true&quot;]:focus, QListWidget:focus {
+    border-color: #6366f1; /* Consistent focus color */
+    outline: none;
+}
+
+QTextEdit[readOnly=&quot;true&quot;] {
+    background: #f9fafb; /* Slightly off-white for read-only */
+    color: #6b7280; /* Greyer text for read-only */
+}
+
+/* List Widgets */
+QListWidget {
+    alternate-background-color: #f9fafb;
+    selection-background-color: #6366f1;
+    selection-color: white;
+}
+
+QListWidget::item {
+    padding: 8px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+QListWidget::item:hover {
+    background: #f3f4f6;
+}
+
+QListWidget::item:selected {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #6366f1, stop:1 #4f46e5);
+}
+
+/* Buttons */
+QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #6366f1, stop:1 #4f46e5); /* Main button gradient */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #5855eb, stop:1 #4338ca);
+}
+
+QPushButton:pressed {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #4338ca, stop:1 #3730a3);
+}
+
+QPushButton:disabled {
+    background: #9ca3af;
+    color: #6b7280;
+}
+
+/* Specific button styles */
+QPushButton#btnViewFullCV {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #10b981, stop:1 #059669); /* Green for View Full CV */
+}
+QPushButton#btnViewFullCV:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #059669, stop:1 #047857);
+}
+
+QPushButton#btnClose {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ef4444, stop:1 #dc2626); /* Red for Close */
+}
+QPushButton#btnClose:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #dc2626, stop:1 #b91c1c);
+}
+
+/* Scrollbar Styling - Re-used from MainWindow */
+QScrollBar:vertical {
+    border: 1px solid #d0d0d0;
+    background: #f5f5f5;
+    width: 10px;
+    margin: 0px 0px 0px 0px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical {
+    background: #a0a0a0;
+    min-height: 20px;
+    border-radius: 5px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    border: none;
+    background: none;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: none;
+}
+
+QScrollArea {
+    border: none;
+    background-color: transparent;
+}
+
+QScrollArea &gt; QWidget {
+    background-color: transparent;
+}
+   </string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <!-- Header -->
    <item>
-    <widget class="QLabel" name="lblApplicantName">
-     <property name="text">
-      <string>Applicant Name</string>
+    <layout class="QHBoxLayout" name="headerLayout">
+     <property name="spacing">
+      <number>10</number>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>16</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
+     <property name="leftMargin">
+      <number>20</number>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
+     <property name="topMargin">
+      <number>20</number>
      </property>
-    </widget>
+     <property name="rightMargin">
+      <number>20</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="lblProfilePicture">
+       <property name="minimumSize">
+        <size>
+         <width>80</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>icons/default_profile.png</pixmap> </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="lblApplicantName">
+       <property name="text">
+        <string>Applicant Name</string>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>-1</pointsize> <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="headerSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
-   
-   <!-- Content Area -->
+
    <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="widgetResizable">
@@ -49,189 +295,237 @@
         <x>0</x>
         <y>0</y>
         <width>780</width>
-        <height>520</height>
+        <height>550</height>
        </rect>
       </property>
-      
-      <!-- Personal Information -->
-      <widget class="QGroupBox" name="groupPersonal">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>760</width>
-         <height>120</height>
-        </rect>
+      <layout class="QVBoxLayout" name="scrollAreaVLayout">
+       <property name="spacing">
+        <number>15</number>
        </property>
-       <property name="title">
-        <string>Personal Information</string>
+       <property name="leftMargin">
+        <number>10</number>
        </property>
-       
-       <widget class="QLabel" name="lblEmail">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>30</y>
-          <width>350</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Email: -</string>
-        </property>
-       </widget>
-       
-       <widget class="QLabel" name="lblPhone">
-        <property name="geometry">
-         <rect>
-          <x>380</x>
-          <y>30</y>
-          <width>350</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Phone: -</string>
-        </property>
-       </widget>
-       
-       <widget class="QLabel" name="lblAddress">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>60</y>
-          <width>710</width>
-          <height>40</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Address: -</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </widget>
-      
-      <!-- Summary Section -->
-      <widget class="QGroupBox" name="groupSummary">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>140</y>
-         <width>760</width>
-         <height>100</height>
-        </rect>
+       <property name="topMargin">
+        <number>10</number>
        </property>
-       <property name="title">
-        <string>Professional Summary</string>
+       <property name="rightMargin">
+        <number>10</number>
        </property>
-       
-       <widget class="QTextEdit" name="textSummary">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>30</y>
-          <width>720</width>
-          <height>60</height>
-         </rect>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </widget>
-      
-      <!-- Skills Section -->
-      <widget class="QGroupBox" name="groupSkills">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>250</y>
-         <width>370</width>
-         <height>200</height>
-        </rect>
+       <property name="bottomMargin">
+        <number>10</number>
        </property>
-       <property name="title">
-        <string>Skills</string>
-       </property>
-       
-       <widget class="QListWidget" name="listSkills">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>30</y>
-          <width>330</width>
-          <height>160</height>
-         </rect>
-        </property>
-       </widget>
-      </widget>
-      
-      <!-- Work Experience Section -->
-      <widget class="QGroupBox" name="groupWorkExperience">
-       <property name="geometry">
-        <rect>
-         <x>390</x>
-         <y>250</y>
-         <width>380</width>
-         <height>200</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Work Experience</string>
-       </property>
-       
-       <widget class="QTextEdit" name="textWorkExperience">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>30</y>
-          <width>340</width>
-          <height>160</height>
-         </rect>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </widget>
-      
-      <!-- Education Section -->
-      <widget class="QGroupBox" name="groupEducation">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>460</y>
-         <width>760</width>
-         <height>120</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Education</string>
-       </property>
-       
-       <widget class="QTextEdit" name="textEducation">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>30</y>
-          <width>720</width>
-          <height>80</height>
-         </rect>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </widget>
+
+       <item>
+        <widget class="QGroupBox" name="groupPersonal">
+         <property name="title">
+          <string>Personal Information</string>
+         </property>
+         <layout class="QGridLayout" name="personalGridLayout">
+          <property name="verticalSpacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>15</number>
+          </property>
+          <property name="topMargin">
+           <number>15</number>
+          </property>
+          <property name="rightMargin">
+           <number>15</number>
+          </property>
+          <property name="bottomMargin">
+           <number>15</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="lblEmail">
+            <property name="text">
+             <string>Email: -</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="lblPhone">
+            <property name="text">
+             <string>Phone: -</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QLabel" name="lblAddress">
+            <property name="text">
+             <string>Address: -</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+
+       <item>
+        <widget class="QGroupBox" name="groupSummary">
+         <property name="title">
+          <string>Professional Summary</string>
+         </property>
+         <layout class="QVBoxLayout" name="summaryVLayout">
+          <property name="leftMargin">
+           <number>15</number>
+          </property>
+          <property name="topMargin">
+           <number>15</number>
+          </property>
+          <property name="rightMargin">
+           <number>15</number>
+          </property>
+          <property name="bottomMargin">
+           <number>15</number>
+          </property>
+          <item>
+           <widget class="QTextEdit" name="textSummary">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="placeholderText">
+             <string>A concise summary of your professional skills and experience.</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+
+       <item>
+        <layout class="QHBoxLayout" name="skillsWorkLayout">
+         <property name="spacing">
+          <number>15</number>
+         </property>
+         <item>
+          <widget class="QGroupBox" name="groupSkills">
+           <property name="title">
+            <string>Skills</string>
+           </property>
+           <layout class="QVBoxLayout" name="skillsVLayout">
+            <property name="leftMargin">
+             <number>15</number>
+            </property>
+            <property name="topMargin">
+             <number>15</number>
+            </property>
+            <property name="rightMargin">
+             <number>15</number>
+            </property>
+            <property name="bottomMargin">
+             <number>15</number>
+            </property>
+            <item>
+             <widget class="QListWidget" name="listSkills"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
+
+         <item>
+          <widget class="QGroupBox" name="groupWorkExperience">
+           <property name="title">
+            <string>Work Experience</string>
+           </property>
+           <layout class="QVBoxLayout" name="workExperienceVLayout">
+            <property name="leftMargin">
+             <number>15</number>
+            </property>
+            <property name="topMargin">
+             <number>15</number>
+            </property>
+            <property name="rightMargin">
+             <number>15</number>
+            </property>
+            <property name="bottomMargin">
+             <number>15</number>
+            </property>
+            <item>
+             <widget class="QTextEdit" name="textWorkExperience">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+              <property name="placeholderText">
+               <string>List your relevant work experience here, including roles, companies, and dates.</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+
+       <item>
+        <widget class="QGroupBox" name="groupEducation">
+         <property name="title">
+          <string>Education</string>
+         </property>
+         <layout class="QVBoxLayout" name="educationVLayout">
+          <property name="leftMargin">
+           <number>15</number>
+          </property>
+          <property name="topMargin">
+           <number>15</number>
+          </property>
+          <property name="rightMargin">
+           <number>15</number>
+          </property>
+          <property name="bottomMargin">
+           <number>15</number>
+          </property>
+          <item>
+           <widget class="QTextEdit" name="textEducation">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="placeholderText">
+             <string>Summarize your educational background, degrees, and institutions.</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
-   
-   <!-- Button Layout -->
+
    <item>
     <layout class="QHBoxLayout" name="buttonLayout">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="leftMargin">
+      <number>20</number>
+     </property>
+     <property name="topMargin">
+      <number>5</number>
+     </property>
+     <property name="rightMargin">
+      <number>20</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -248,7 +542,7 @@
      <item>
       <widget class="QPushButton" name="btnViewFullCV">
        <property name="text">
-        <string>View Full CV</string>
+        <string>📄 View Full CV</string>
        </property>
        <property name="minimumSize">
         <size>
@@ -261,7 +555,7 @@
      <item>
       <widget class="QPushButton" name="btnClose">
        <property name="text">
-        <string>Close</string>
+        <string>🚪 Close</string>
        </property>
        <property name="minimumSize">
         <size>

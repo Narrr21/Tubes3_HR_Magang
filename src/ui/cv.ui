@@ -16,19 +16,151 @@
   <property name="modal">
    <bool>true</bool>
   </property>
+  <property name="styleSheet">
+   <string notr="true">
+/* Base Dialog Styling - Matches MainWindow and SummaryWindow */
+QDialog {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #f8fafc, stop:1 #e2e8f0);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Header Labels */
+QLabel#lblCVTitle {
+    color: #374151; /* Dark grey */
+    font-weight: bold;
+    font-size: 16px; /* Slightly smaller than main title but prominent */
+    padding: 5px;
+}
+
+QLabel#lblFileName {
+    color: #6b7280; /* Greyish text for file info */
+    font-size: 13px;
+    font-style: italic;
+    padding: 5px;
+}
+
+/* Toolbar Frame Styling */
+QFrame#toolbar {
+    background: #ffffff; /* White background for toolbar */
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    margin: 5px; /* Adjust margin to give it space */
+    padding: 5px;
+}
+
+/* General Button Styling (from MainWindow) */
+QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #6366f1, stop:1 #4f46e5); /* Main button gradient */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: bold;
+    font-size: 12px;
+    min-width: 80px; /* Ensure a minimum width for all buttons */
+    min-height: 30px; /* Ensure a minimum height for all buttons */
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #5855eb, stop:1 #4338ca);
+}
+
+QPushButton:pressed {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #4338ca, stop:1 #3730a3);
+}
+
+QPushButton:disabled {
+    background: #9ca3af;
+    color: #6b7280;
+}
+
+/* Specific Toolbar Button Styling */
+QPushButton#btnZoomIn, QPushButton#btnZoomOut {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #06b6d4, stop:1 #0891b2); /* Cyan gradient */
+    min-width: 60px; /* Smaller width for zoom buttons */
+}
+QPushButton#btnZoomIn:hover, QPushButton#btnZoomOut:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0891b2, stop:1 #0e7490);
+}
+
+QPushButton#btnSaveAs {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #f97316, stop:1 #ea580c); /* Orange gradient for Save As */
+}
+QPushButton#btnSaveAs:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ea580c, stop:1 #c2410c);
+}
+
+/* Main Content TextEdit */
+QTextEdit {
+    border: 2px solid #e5e7eb;
+    border-radius: 12px; /* Consistent rounded corners */
+    padding: 15px; /* More padding for content */
+    background: white;
+    font-size: 13px; /* Match general text size */
+    color: #374151; /* Dark grey text */
+}
+
+QTextEdit:read-only {
+    background: #f9fafb; /* Slightly off-white for read-only */
+    color: #6b7280; /* Greyer text for read-only */
+}
+
+/* Bottom Action Buttons */
+QPushButton#btnViewSummary {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #8b5cf6, stop:1 #7c3aed); /* Purple similar to Upload */
+}
+QPushButton#btnViewSummary:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #7c3aed, stop:1 #6d28d9);
+}
+
+QPushButton#btnAnalyzeSkills {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #10b981, stop:1 #059669); /* Green similar to Browse */
+}
+QPushButton#btnAnalyzeSkills:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #059669, stop:1 #047857);
+}
+
+QPushButton#btnPrint {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0ea5e9, stop:1 #0284c7); /* Light blue for Print */
+}
+QPushButton#btnPrint:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #0284c7, stop:1 #0369a1);
+}
+
+QPushButton#btnClose {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #ef4444, stop:1 #dc2626); /* Red for Close */
+}
+QPushButton#btnClose:hover {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #dc2626, stop:1 #b91c1c);
+}
+   </string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <!-- Header with CV Info -->
+   <property name="spacing">
+    <number>10</number>
+   </property>
+   <property name="leftMargin">
+    <number>20</number>
+   </property>
+   <property name="topMargin">
+    <number>20</number>
+   </property>
+   <property name="rightMargin">
+    <number>20</number>
+   </property>
+   <property name="bottomMargin">
+    <number>20</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="headerLayout">
      <item>
       <widget class="QLabel" name="lblCVTitle">
        <property name="text">
-        <string>CV Document</string>
+        <string>📄 CV Document Viewer</string>
        </property>
        <property name="font">
         <font>
-         <pointsize>14</pointsize>
-         <weight>75</weight>
+         <pointsize>-1</pointsize> <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -39,37 +171,56 @@
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
       </spacer>
      </item>
      <item>
       <widget class="QLabel" name="lblFileName">
        <property name="text">
-        <string>File: filename.pdf</string>
+        <string>File: N/A</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   
-   <!-- Toolbar -->
+
    <item>
     <widget class="QFrame" name="toolbar">
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
+      <enum>QFrame::NoFrame</enum> </property>
      <property name="maximumHeight">
       <number>50</number>
      </property>
      <layout class="QHBoxLayout" name="toolbarLayout">
+      <property name="spacing">
+       <number>10</number>
+      </property>
+      <property name="leftMargin">
+       <number>10</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>10</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QPushButton" name="btnZoomIn">
         <property name="text">
-         <string>Zoom In</string>
+         <string>➕ Zoom In</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>80</width>
-          <height>30</height>
+          <width>100</width>
+          <height>35</height>
          </size>
         </property>
        </widget>
@@ -77,12 +228,12 @@
       <item>
        <widget class="QPushButton" name="btnZoomOut">
         <property name="text">
-         <string>Zoom Out</string>
+         <string>➖ Zoom Out</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>80</width>
-          <height>30</height>
+          <width>100</width>
+          <height>35</height>
          </size>
         </property>
        </widget>
@@ -92,17 +243,23 @@
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
        </spacer>
       </item>
       <item>
        <widget class="QPushButton" name="btnSaveAs">
         <property name="text">
-         <string>Save As...</string>
+         <string>💾 Save As...</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>80</width>
-          <height>30</height>
+          <width>120</width>
+          <height>35</height>
          </size>
         </property>
        </widget>
@@ -110,8 +267,7 @@
      </layout>
     </widget>
    </item>
-   
-   <!-- CV Content Display -->
+
    <item>
     <widget class="QTextEdit" name="textCVContent">
      <property name="readOnly">
@@ -119,20 +275,35 @@
      </property>
      <property name="font">
       <font>
-       <family>Consolas</family>
-       <pointsize>10</pointsize>
-      </font>
+       <family>Segoe UI</family> <pointsize>-1</pointsize> </font>
+     </property>
+     <property name="placeholderText">
+      <string>Loading CV content...</string>
      </property>
     </widget>
    </item>
-   
-   <!-- Button Layout -->
+
    <item>
     <layout class="QHBoxLayout" name="buttonLayout">
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>10</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QPushButton" name="btnViewSummary">
        <property name="text">
-        <string>View Summary</string>
+        <string>📄 View Summary</string>
        </property>
        <property name="minimumSize">
         <size>
@@ -145,7 +316,7 @@
      <item>
       <widget class="QPushButton" name="btnAnalyzeSkills">
        <property name="text">
-        <string>Analyze Skills</string>
+        <string>💡 Analyze Skills</string>
        </property>
        <property name="minimumSize">
         <size>
@@ -160,12 +331,18 @@
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
       </spacer>
      </item>
      <item>
       <widget class="QPushButton" name="btnPrint">
        <property name="text">
-        <string>Print</string>
+        <string>🖨️ Print</string>
        </property>
        <property name="minimumSize">
         <size>
@@ -178,7 +355,7 @@
      <item>
       <widget class="QPushButton" name="btnClose">
        <property name="text">
-        <string>Close</string>
+        <string>🚪 Close</string>
        </property>
        <property name="minimumSize">
         <size>
@@ -193,5 +370,22 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>btnClose</sender>
+   <signal>clicked()</signal>
+   <receiver>CVViewerWindow</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>857</x>
+     <y>673</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>449</x>
+     <y>349</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
