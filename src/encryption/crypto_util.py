@@ -1,4 +1,3 @@
-import secrets
 import random
 
 def is_prime(n):
@@ -35,12 +34,6 @@ def generate_prime(bits):
         candidate = random.randint(lower_bound, upper_bound)
         if is_prime(candidate):
             return candidate
-
-def generate_aes_key(size):
-    """ Generate a number in bytes with a specified number of bits """
-    if size not in [128, 192, 256]:
-        raise ValueError("Key size must be 128, 192, or 256 bits")
-    return secrets.token_bytes(size // 8)
 
 def mod_exp(base, exp, mod):
     result = 1
