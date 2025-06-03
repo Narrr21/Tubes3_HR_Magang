@@ -28,6 +28,47 @@ from interface import (
     run_search_algorithm  # run search algorithm on keywords
 )
 
+from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget, QApplication
+from PyQt5.QtCore import Qt, QTimer, QPoint, QPropertyAnimation
+
+class Toast(QWidget):
+    def __init__(self, message, duration=3000, parent=None):
+        super().__init__(parent)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.ToolTip)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setStyleSheet("""
+            background-color: rgba(255, 200, 0, 220);
+            color: black;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 14px;
+        """)
+
+        layout = QVBoxLayout()
+        label = QLabel(message)
+        label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(label)
+        self.setLayout(layout)
+        self.adjustSize()
+
+        # fade-in/out animation
+        self.animation = QPropertyAnimation(self, b"windowOpacity")
+        self.animation.setDuration(500)
+        self.animation.setStartValue(0)
+        self.animation.setEndValue(1)
+        self.animation.start()
+
+        # Auto-close after duration
+        QTimer.singleShot(duration, self.close)
+
+    def show_above(self, parent_widget):
+        # Show popup
+        parent_pos = parent_widget.mapToGlobal(QPoint(0, 0))
+        x = parent_pos.x() + (parent_widget.width() - self.width()) // 2
+        y = parent_pos.y() + 10  # 10px from top
+        self.move(x, y)
+        self.show()
+
 class CVWindow(QDialog):
     def __init__(self, file_path, parent=None):
         super().__init__(parent)
@@ -97,12 +138,11 @@ class SummaryWindow(QDialog):
         self.ui = Ui_SummaryWindow()
         self.ui.setupUi(self)
 
-        # TODO: find nama, email, phone, address, skills, experience, education from database using id
         nama, email, phone, address, skills, experience, education, summary = get_summary_data(id)
         
         self.set_summary_data(summary)
         self.set_name(nama)
-        self.set_personal_info(email=email,address=address) # Try phone none
+        self.set_personal_info(email, phone, address)
         self.set_skills(skills)
         self.set_experience(experience)
         self.set_education(education)
@@ -113,10 +153,8 @@ class SummaryWindow(QDialog):
         Handle the action to view the full CV.
         Opens a new CV viewer window.
         """
-        # TODO: Get the file path of the CV associated with the selected result
         file_path = get_file_path(id)
 
-        # Open a new CV viewer window
         cv_window = CVWindow(file_path, self)
         cv_window.show()
 
@@ -127,7 +165,6 @@ class SummaryWindow(QDialog):
         Set the summary data to be displayed in the summary window.
         :param data: Long string containing the summary information.
         """
-        # Example of setting data, adjust according to your UI design
         self.ui.textSummary.setText(summary_data)
     
     def set_name(self, name):
@@ -272,7 +309,8 @@ class MainWindow(QMainWindow):
         if file_path:
             self.ui.lineEditFilePath.setText(file_path)
         else:
-            QMessageBox.warning(self, "Warning", "No file selected.")
+            toast = Toast("No file selected.", duration=3000, parent=self)
+            toast.show_above(self)
 
     def get_file_path(self):
         return self.ui.lineEditFilePath.text().strip()
@@ -283,7 +321,8 @@ class MainWindow(QMainWindow):
     def handle_upload_button(self):
         file_path = os.path.basename(self.get_file_path())
         if not file_path:
-            QMessageBox.warning(self, "Warning", "Please select a file to upload.")
+            toast = Toast("Please select a file to upload", duration=3000, parent=self)
+            toast.show_above(self)
             return
 
         try:
@@ -298,7 +337,8 @@ class MainWindow(QMainWindow):
             # TODO: Validate id_applicant before proceeding
             
             if not filename.lower().endswith('.pdf'):
-                QMessageBox.warning(self, "File Error", "Only PDF files are allowed.")
+                toast = Toast("Only PDF files are allowed", duration=3000, parent=self)
+                toast.show_above(self)
                 self.ui.lineEditFilePath.clear()  # Clear file path input
                 self.ui.inputIDApplicants.clear()  # Clear ID input
                 return
@@ -318,9 +358,9 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Upload Error", f"Failed to upload file:\n{e}")
     
     def handle_action_upload_cvs(self):
-        self.handle_browse_button()  # Trigger browse action
+        self.handle_browse_button()  # Trigger browse
         if self.get_file_path():
-            self.handle_upload_button()  # Trigger upload action
+            self.handle_upload_button()  # Trigger upload
     
     ## <----------------SEARCH HANDLERS-------------------------------------------------------------------------------->
     def get_selected_algorithm(self):
@@ -344,8 +384,6 @@ class MainWindow(QMainWindow):
         if keywords:
             return keywords
         else:
-            QMessageBox.warning(self, "Input Error", "Please enter at least one keyword.")
-            self.ui.inputKeywords.clear()
             return []
 
 
@@ -358,11 +396,11 @@ class MainWindow(QMainWindow):
         print(f"[SEARCH] Searching with {algorithm} for keywords: {', '.join(keywords)} (Limit: {limit})")
 
         if not keywords:
-            QMessageBox.warning(self, "Input Error", "Please enter keyword(s) to search.")
+            toast = Toast("Please enter keyword to search", duration=3000, parent=self)
+            toast.show_above(self)
             return
 
-        # TODO: Run selected search algorithm on keywords here
-        results = run_search_algorithm(algorithm, keywords, limit)
+        results, exact_time, fuzzy_time = run_search_algorithm(algorithm, keywords, limit)
 
         self.ui.listResults.clear()
         for res in results:
@@ -372,15 +410,24 @@ class MainWindow(QMainWindow):
             else:
                 display_text += " - No keywords found"
             item = QListWidgetItem(display_text)
-            item.setData(Qt.UserRole, res)  # Store full object or a dict
+            item.setData(Qt.UserRole, res)
             self.ui.listResults.addItem(item)
 
+        if exact_time != None:
+            self.ui.lblExactMatchTime.setText("🎯 Exact Match : " + exact_time + " ms")  # placeholder
+        else:
+            self.ui.lblExactMatchTime.setText("🎯 Exact Match : -ms")
 
-        # Update performance labels (placeholders)
-        self.ui.lblExactMatchTime.setText("🎯 Exact Match : 0.123 ms")  # placeholder
-        self.ui.lblFuzzyMatchTime.setText("🔍 Fuzzy Match : 0.456 ms")  # placeholder
-
-        self.ui.lblTotalResults.setText(f"📊 Total Results: {len(results)}")
+        if fuzzy_time != None:
+            self.ui.lblFuzzyMatchTime.setText("🔍 Fuzzy Match : " + fuzzy_time + " ms")  # placeholder
+        else:
+            self.ui.lblFuzzyMatchTime.setText("🔍 Fuzzy Match : -ms")
+        
+        if len(results) > 0:
+            self.ui.lblTotalResults.setText(f"📊 Total Results: {len(results)}")
+        else:
+            self.ui.lblTotalResults.setText("📊 Total Results: -")
+        
         self.ui.btnViewSummary.setEnabled(len(results) > 0)
         self.ui.btnViewCV.setEnabled(len(results) > 0)
 
@@ -395,32 +442,29 @@ class MainWindow(QMainWindow):
         self.ui.btnViewCV.setEnabled(False)
     
     ## <----------------RESULT HANDLERS-------------------------------------------------------------------------------->
-    # Placeholder: View detailed summary of selected result
     def handle_view_summary(self):
         selected = self.get_selected_result()
         if selected:
             print(f"[VIEW SUMMARY] Selected result: name={selected.name}, id={selected.id}")
 
-            # Open a new summary window
             summary_window = SummaryWindow(self, id=selected.id)
             summary_window.show()
         else:
-            QMessageBox.warning(self, "No Selection", "Please select a result first.")
+            toast = Toast("Please select a result first.", duration=3000, parent=self)
+            toast.show_above(self)
 
-    # Placeholder: View CV of selected result
     def handle_view_cv(self):
         selected = self.get_selected_result()
         if selected:
             print(f"[VIEW CV] Selected result: name={selected.name}, id={selected.id}")
 
-            # TODO: Get the file path of the CV associated with the selected result
             file_path = get_file_path(selected.id)
 
-            # Open a new CV viewer window
             cv_window = CVWindow(file_path, self)
             cv_window.show()
         else:
-            QMessageBox.warning(self, "No Selection", "Please select a result first.")
+            toast = Toast("Please select a result first.", duration=3000, parent=self)
+            toast.show_above(self)
 
     def get_selected_result(self):
         selected_items = self.ui.listResults.selectedItems()

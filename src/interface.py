@@ -1,5 +1,6 @@
 from typing import List
-
+from KMP import KMP
+import time
 
 # DATA STRUCTURES
 class SummaryData():
@@ -18,6 +19,12 @@ class ResultData():
         self.id = id
         self.name = name
         self.keywords = keywords
+
+class SearchData():
+    def __init__(self, id: int, name: str, text: str):
+        self.id = id
+        self.name = name
+        self.text = text
 
 
 # FUNCTION DEFINITIONS
@@ -65,7 +72,7 @@ def get_file_path(id: int) -> str:
     file_path = "./data/tes_pdf.pdf"
     return file_path
 
-def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) -> List[ResultData]:
+def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) -> tuple[List[ResultData], int, int]:
     """
     Runs the specified search algorithm with the given query.
 
@@ -76,13 +83,70 @@ def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) ->
 
     Returns:
         List[ResultData]: A list of data matching the search criteria.
+        int : Exact Match Time
+        int : Fuzzy Match Time
     """
 
-    # Placeholder dummy results simulating keyword matches
-    results = [
-        ResultData(id=1, name="John Doe", keywords={"Python": 5, "Data Analysis": 3}),
-        ResultData(id=2, name="Jane Smith", keywords={"Machine Learning": 4, "Python": 2}),
-        ResultData(id=3, name="Alice Johnson", keywords={"Data Science": 5, "Python": 1}),
-        ResultData(id=4, name="Bob Brown", keywords={"Software Engineering": 3, "Python": 2}),
+    # TODO: Take Search Data from Database
+
+    # placeholder
+    search = [
+        SearchData(
+            id=1,
+            name="John Doe",
+            text="In a world where everything changes constantly, finding consistency in values and vision remains paramount to achieving lasting success."
+        ),
+        SearchData(
+            id=2,
+            name="Jane Smith",
+            text="From the farthest corners of forgotten libraries to the cutting edge of neural networks, knowledge flows unceasingly like a river carving its legacy through stone."
+        ),
+        SearchData(
+            id=3,
+            name="Carlos Nguyen",
+            text="Despite the cacophony of opinions in digital forums, the quiet truth of well-reasoned evidence continues to resonate with those who seek clarity amidst confusion."
+        ),
+        SearchData(
+            id=4,
+            name="Aisha Ibrahim",
+            text="It was not the brightest star that guided the explorers, but the one that held steady through storms and silence, whispering of lands uncharted yet deeply yearned for."
+        ),
+        SearchData(
+            id=5,
+            name="Liam Tanaka",
+            text="Quantum possibilities dance beneath the surface of everyday decisions, subtly influencing outcomes in ways no deterministic algorithm can entirely predict or explain."
+        )
     ]
-    return results[:limit]  # Return only up to the specified limit
+    fuzzy = True
+    exact_time = None
+    fuzzy_time = None
+    results = []
+    ## KMP
+    if (algorithm == "KMP"):
+        start_time = time.time()
+        for data in search:
+            res = ResultData(id=data.id, name=data.name, keywords={})
+            kmp = KMP("")
+            res.keywords = kmp.search_multi_pattern(data.text, keyword)
+            if not res.keywords == {}:
+                fuzzy = False
+            results.append(res)
+        exact_time = time.time() - start_time
+    elif (algorithm == "BM"):
+        ...
+    else:
+        ...
+    
+    if fuzzy:
+        # TODO: fuzzy match here
+        ...
+    
+    return results[:limit], exact_time, fuzzy_time
+    # Placeholder dummy results simulating keyword matches
+    # results = [
+    #     ResultData(id=1, name="John Doe", keywords={"Python": 5, "Data Analysis": 3}),
+    #     ResultData(id=2, name="Jane Smith", keywords={"Machine Learning": 4, "Python": 2}),
+    #     ResultData(id=3, name="Alice Johnson", keywords={"Data Science": 5, "Python": 1}),
+    #     ResultData(id=4, name="Bob Brown", keywords={"Software Engineering": 3, "Python": 2}),
+    # ]
+    # return results[:limit], 123, 456
