@@ -1,17 +1,199 @@
 import sys
 import os
+import fitz  
 from datetime import datetime
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QFileDialog, QDialog
+from PyQt5.QtWidgets import (
+    QApplication, 
+    QMainWindow, 
+    QMessageBox, 
+    QFileDialog, 
+    QDialog, 
+    QWidget, 
+    QVBoxLayout, 
+    QHBoxLayout, 
+    QLabel, 
+    QScrollArea,
+    QPushButton
+)
+from PyQt5.QtGui import QPixmap, QImage
+from PyQt5.QtCore import Qt
 from ui.home import Ui_MainWindow
 from ui.summary import Ui_SummaryWindow  # Assuming you have a separate summary UI file
+from ui.cv import Ui_CVViewerWindow  # Assuming yrou have a separate CV UI file
 # from db import get_connection  # Uncomment and implement when ready
 
+class CVWindow(QDialog):
+    def __init__(self, file_path, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("PDF Viewer")
+        self.resize(700, 900)
+
+        if not os.path.exists(file_path):
+            return
+
+        self.doc = fitz.open(file_path)
+        self.zoom_factor = 1.0  # Start with 100%
+
+        # Scroll Area setup
+        self.scroll = QScrollArea(self)
+        self.container = QWidget()
+        self.layout = QVBoxLayout(self.container)
+
+        self.labels = []
+        for page in self.doc:
+            pix = page.get_pixmap()
+            image = QImage(pix.samples, pix.width, pix.height, pix.stride, QImage.Format_RGB888)
+            label = QLabel()
+            pixmap = QPixmap.fromImage(image)
+            label.setPixmap(pixmap)
+            label.original_pixmap = pixmap  # Save original pixmap for scaling
+            self.layout.addWidget(label)
+            self.labels.append(label)
+
+        self.scroll.setWidget(self.container)
+        self.scroll.setWidgetResizable(True)
+
+        # Zoom buttons
+        zoom_in_btn = QPushButton("Zoom In +")
+        zoom_out_btn = QPushButton("Zoom Out -")
+
+        zoom_in_btn.clicked.connect(self.zoom_in)
+        zoom_out_btn.clicked.connect(self.zoom_out)
+
+        btn_layout = QHBoxLayout()
+        btn_layout.addWidget(zoom_in_btn)
+        btn_layout.addWidget(zoom_out_btn)
+
+        main_layout = QVBoxLayout()
+        main_layout.addLayout(btn_layout)
+        main_layout.addWidget(self.scroll)
+        self.setLayout(main_layout)
+
+    def zoom_in(self):
+        self.zoom_factor *= 1.25
+        self.apply_zoom()
+
+    def zoom_out(self):
+        self.zoom_factor /= 1.25
+        self.apply_zoom()
+
+    def apply_zoom(self):
+        for label in self.labels:
+            original_pixmap = label.original_pixmap
+            size = original_pixmap.size()
+            new_size = size * self.zoom_factor
+            scaled_pixmap = original_pixmap.scaled(new_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            label.setPixmap(scaled_pixmap)
+
 class SummaryWindow(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, id=None):
         super().__init__(parent)
         self.ui = Ui_SummaryWindow()
         self.ui.setupUi(self)
-        self.setWindowTitle("Search Summary")
+
+        # TODO: find nama, email, phone, address, skills, experience, education from database using id
+
+        #placeholder data
+        summary_daya = "This is a summary of the CV or result being displayed."
+        nama = "John Doe"
+        email = "John@email.com"
+        # phone = "123-456-7890"
+        address = "123 Main St, City, Country"
+        skills = ["Python", "Data Analysis", "Machine Learning"]
+        experience = ["Company A - Data Scientist (2020-2022)", "Company B - Software Engineer (2018-2020)"]
+        education = ["B.Sc. in Computer Science - University X (2014-2018)", "M.Sc. in Data Science - University Y (2018-2020)"]
+        self.set_summary_data(summary_daya)
+        self.set_name(nama)
+        self.set_personal_info(email=email,address=address) # Try phone none
+        self.set_skills(skills)
+        self.set_experience(experience)
+        self.set_education(education)
+        self.ui.btnViewFullCV.clicked.connect(self.handle_view_cv)
+    
+    def handle_view_cv(self):
+        """
+        Handle the action to view the full CV.
+        Opens a new CV viewer window.
+        """
+        # TODO: Get the file path of the CV associated with the selected result
+
+        # placeholder file path
+        file_path = "./data/tes_pdf.pdf"  # Replace with actual file path from database
+        # Open a new CV viewer window
+        cv_window = CVWindow(file_path, self)
+        cv_window.show()
+
+
+    
+    def set_summary_data(self, summary_data):
+        """
+        Set the summary data to be displayed in the summary window.
+        :param data: Dictionary containing summary information.
+        """
+        # Example of setting data, adjust according to your UI design
+        self.ui.textSummary.setText(summary_data)
+    
+    def set_name(self, name):
+        """
+        Set the name of the CV or result being summarized.
+        :param name: Name of the CV or result.
+        """
+        self.setWindowTitle(f"Summary for {name}")
+        self.ui.lblApplicantName.setText(name)
+    
+    def set_personal_info(self, email = None, phone = None, address = None):
+        """
+        Set personal information to be displayed in the summary.
+        :param info: Dictionary containing personal information.
+        """
+        if email:
+            self.ui.lblEmail.setText("Email: " + email)
+        else:
+            self.ui.lblEmail.setText("Email: -")
+        if phone:
+            self.ui.lblPhone.setText("Phone: " + phone)
+        else:
+            self.ui.lblPhone.setText("Phone: -")
+        if address:
+            self.ui.lblAddress.setText("Address: " + address)
+        else:
+            self.ui.lblAddress.setText("Address: -")
+    
+    def set_skills(self, skills):
+        """
+        Set the skills to be displayed in the summary.
+        :param skills: List of skills.
+        """
+        if skills:
+            self.ui.listSkill.clear()
+            for skill in skills:
+                self.ui.listSkill.addItem(skill)
+        else:
+            self.ui.listSkill.addItem("No skills listed")
+    
+    def set_experience(self, experience):
+        """
+        Set the work experience to be displayed in the summary.
+        :param experience: List of work experience entries.
+        """
+        if experience:
+            self.ui.listExperience.clear()
+            for exp in experience:
+                self.ui.listExperience.addItem(exp)
+        else:
+            self.ui.listExperience.addItem("No work experience listed")
+    
+    def set_education(self, education):
+        """
+        Set the education details to be displayed in the summary.
+        :param education: List of education entries.
+        """
+        if education:
+            self.ui.listEducation.clear()
+            for edu in education:
+                self.ui.listEducation.addItem(edu)
+        else:
+            self.ui.listEducation.addItem("No education listed")
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -32,12 +214,10 @@ class MainWindow(QMainWindow):
         self.ui.btnClear.clicked.connect(self.handle_clear_button)
         self.ui.btnViewSummary.clicked.connect(self.handle_view_summary)
         self.ui.btnViewCV.clicked.connect(self.handle_view_cv)
-        self.ui.btnExportResults.clicked.connect(self.handle_export_results)
 
         # Initialize UI state
         self.ui.btnViewSummary.setEnabled(False)
         self.ui.btnViewCV.setEnabled(False)
-        self.ui.btnExportResults.setEnabled(False)
 
         # Simulated in-memory "database" of uploaded CVs
         self.uploaded_cvs = []  # Each item: dict with keys 'filename' and 'upload_time' (datetime)
@@ -153,11 +333,15 @@ class MainWindow(QMainWindow):
         keywords = self.get_keywords()
         limit = self.get_result_limit()
 
+        # DEBUG
+        print(f"[SEARCH] Searching with {algorithm} for keywords: {', '.join(keywords)} (Limit: {limit})")
+
         if not keywords:
             QMessageBox.warning(self, "Input Error", "Please enter keyword(s) to search.")
             return
 
         # TODO: Run selected search algorithm on keywords here
+
         # Placeholder: simulate search results
         dummy_results = [f"Result {i+1} for '{keywords[0]}'" for i in range(limit)]
 
@@ -169,10 +353,10 @@ class MainWindow(QMainWindow):
         # Update performance labels (placeholders)
         self.ui.lblExactMatchTime.setText("🎯 Exact Match : 0.123 ms")  # placeholder
         self.ui.lblFuzzyMatchTime.setText("🔍 Fuzzy Match : 0.456 ms")  # placeholder
+
         self.ui.lblTotalResults.setText(f"📊 Total Results: {len(dummy_results)}")
         self.ui.btnViewSummary.setEnabled(len(dummy_results) > 0)
         self.ui.btnViewCV.setEnabled(len(dummy_results) > 0)
-        self.ui.btnExportResults.setEnabled(len(dummy_results) > 0)
 
     def handle_clear_button(self):
         self.ui.inputKeywords.clear()
@@ -183,14 +367,13 @@ class MainWindow(QMainWindow):
 
         self.ui.btnViewSummary.setEnabled(False)
         self.ui.btnViewCV.setEnabled(False)
-        self.ui.btnExportResults.setEnabled(False)
     
     ## <----------------RESULT HANDLERS-------------------------------------------------------------------------------->
     # Placeholder: View detailed summary of selected result
     def handle_view_summary(self):
         selected = self.get_selected_result()
         if selected:
-            QMessageBox.information(self, "Summary", f"Showing summary for:\n{selected}")
+            print(f"[VIEW SUMMARY] Selected result: {selected}")
 
             # Open a new summary window
             summary_window = SummaryWindow(self)
@@ -202,14 +385,17 @@ class MainWindow(QMainWindow):
     def handle_view_cv(self):
         selected = self.get_selected_result()
         if selected:
-            QMessageBox.information(self, "CV View", f"Showing CV for:\n{selected}")
+            print(f"[VIEW CV] Selected result: {selected}")
+
+            # TODO: Get the file path of the CV associated with the selected result
+
+            # placeholder file path
+            file_path = "./data/tes_pdf.pdf"  # Replace with actual file path from database
+            # Open a new CV viewer window
+            cv_window = CVWindow(file_path, self)
+            cv_window.show()
         else:
             QMessageBox.warning(self, "No Selection", "Please select a result first.")
-
-    # Placeholder: Export all search results to file
-    def handle_export_results(self):
-        # TODO: Implement export (CSV, Excel, etc.)
-        QMessageBox.information(self, "Export", "Exporting all results (placeholder).")
 
     def get_selected_result(self):
         selected_items = self.ui.listResults.selectedItems()

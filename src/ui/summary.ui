@@ -13,9 +13,6 @@
   <property name="windowTitle">
    <string>CV Summary</string>
   </property>
-  <property name="modal">
-   <bool>true</bool>
-  </property>
   <property name="styleSheet">
    <string notr="true">
 /* Main Window Styling - Adapted for QDialog */
@@ -207,6 +204,9 @@ QScrollArea &gt; QWidget {
 }
    </string>
   </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QHBoxLayout" name="headerLayout">
@@ -243,7 +243,8 @@ QScrollArea &gt; QWidget {
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap>icons/default_profile.png</pixmap> </property>
+        <pixmap>icons/default_profile.png</pixmap>
+       </property>
        <property name="scaledContents">
         <bool>true</bool>
        </property>
@@ -254,17 +255,18 @@ QScrollArea &gt; QWidget {
      </item>
      <item>
       <widget class="QLabel" name="lblApplicantName">
-       <property name="text">
-        <string>Applicant Name</string>
-       </property>
        <property name="font">
         <font>
-         <pointsize>-1</pointsize> <weight>75</weight>
+         <pointsize>-1</pointsize>
+         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
+       <property name="text">
+        <string>Applicant Name</string>
+       </property>
        <property name="alignment">
-        <set>Qt::AlignLeft|Qt::AlignVCenter</set>
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
@@ -283,7 +285,6 @@ QScrollArea &gt; QWidget {
      </item>
     </layout>
    </item>
-
    <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="widgetResizable">
@@ -293,9 +294,9 @@ QScrollArea &gt; QWidget {
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>780</width>
-        <height>550</height>
+        <y>-517</y>
+        <width>768</width>
+        <height>971</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="scrollAreaVLayout">
@@ -314,16 +315,12 @@ QScrollArea &gt; QWidget {
        <property name="bottomMargin">
         <number>10</number>
        </property>
-
        <item>
         <widget class="QGroupBox" name="groupPersonal">
          <property name="title">
           <string>Personal Information</string>
          </property>
          <layout class="QGridLayout" name="personalGridLayout">
-          <property name="verticalSpacing">
-           <number>5</number>
-          </property>
           <property name="leftMargin">
            <number>15</number>
           </property>
@@ -335,6 +332,9 @@ QScrollArea &gt; QWidget {
           </property>
           <property name="bottomMargin">
            <number>15</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>5</number>
           </property>
           <item row="0" column="0">
            <widget class="QLabel" name="lblEmail">
@@ -363,7 +363,6 @@ QScrollArea &gt; QWidget {
          </layout>
         </widget>
        </item>
-
        <item>
         <widget class="QGroupBox" name="groupSummary">
          <property name="title">
@@ -395,7 +394,6 @@ QScrollArea &gt; QWidget {
          </layout>
         </widget>
        </item>
-
        <item>
         <layout class="QHBoxLayout" name="skillsWorkLayout">
          <property name="spacing">
@@ -420,12 +418,11 @@ QScrollArea &gt; QWidget {
              <number>15</number>
             </property>
             <item>
-             <widget class="QListWidget" name="listSkills"/>
+             <widget class="QListWidget" name="listSkill"/>
             </item>
            </layout>
           </widget>
          </item>
-
          <item>
           <widget class="QGroupBox" name="groupWorkExperience">
            <property name="title">
@@ -445,21 +442,13 @@ QScrollArea &gt; QWidget {
              <number>15</number>
             </property>
             <item>
-             <widget class="QTextEdit" name="textWorkExperience">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-              <property name="placeholderText">
-               <string>List your relevant work experience here, including roles, companies, and dates.</string>
-              </property>
-             </widget>
+             <widget class="QListWidget" name="listExperience"/>
             </item>
            </layout>
           </widget>
          </item>
         </layout>
        </item>
-
        <item>
         <widget class="QGroupBox" name="groupEducation">
          <property name="title">
@@ -479,14 +468,7 @@ QScrollArea &gt; QWidget {
            <number>15</number>
           </property>
           <item>
-           <widget class="QTextEdit" name="textEducation">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="placeholderText">
-             <string>Summarize your educational background, degrees, and institutions.</string>
-            </property>
-           </widget>
+           <widget class="QListWidget" name="listEducation"/>
           </item>
          </layout>
         </widget>
@@ -508,7 +490,6 @@ QScrollArea &gt; QWidget {
      </widget>
     </widget>
    </item>
-
    <item>
     <layout class="QHBoxLayout" name="buttonLayout">
      <property name="spacing">
@@ -541,27 +522,27 @@ QScrollArea &gt; QWidget {
      </item>
      <item>
       <widget class="QPushButton" name="btnViewFullCV">
-       <property name="text">
-        <string>📄 View Full CV</string>
-       </property>
        <property name="minimumSize">
         <size>
          <width>120</width>
          <height>35</height>
         </size>
        </property>
+       <property name="text">
+        <string>📄 View Full CV</string>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnClose">
-       <property name="text">
-        <string>🚪 Close</string>
-       </property>
        <property name="minimumSize">
         <size>
          <width>80</width>
          <height>35</height>
         </size>
+       </property>
+       <property name="text">
+        <string>🚪 Close</string>
        </property>
       </widget>
      </item>
