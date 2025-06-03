@@ -18,7 +18,7 @@ from PyQt5.QtWidgets import (
     QListWidgetItem
 )
 from PyQt5.QtGui import QPixmap, QImage
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QStringListModel
 from ui.home import Ui_MainWindow
 from ui.summary import Ui_SummaryWindow  # Assuming you have a separate summary UI file
 # from db import get_connection  # Uncomment and implement when ready
@@ -194,42 +194,42 @@ class SummaryWindow(QDialog):
             self.ui.lblAddress.setText("Address: " + address)
         else:
             self.ui.lblAddress.setText("Address: -")
-    
+        
     def set_skills(self, skills):
         """
         Set the skills to be displayed in the summary.
         :param skills: List of skills (strings) to be displayed.
         """
+        model = QStringListModel()
         if skills:
-            self.ui.listSkill.clear()
-            for skill in skills:
-                self.ui.listSkill.addItem(skill)
+            model.setStringList(skills)
         else:
-            self.ui.listSkill.addItem("No skills listed")
-    
+            model.setStringList(["No skills listed"])
+        self.ui.listSkill.setModel(model)
+
     def set_experience(self, experience):
         """
         Set the work experience to be displayed in the summary.
         :param experience: List of work experience (strings) to be displayed.
         """
+        model = QStringListModel()
         if experience:
-            self.ui.listExperience.clear()
-            for exp in experience:
-                self.ui.listExperience.addItem(exp)
+            model.setStringList(experience)
         else:
-            self.ui.listExperience.addItem("No work experience listed")
-    
+            model.setStringList(["No work experience listed"])
+        self.ui.listExperience.setModel(model)
+
     def set_education(self, education):
         """
         Set the education details to be displayed in the summary.
         :param education: List of education (strings) to be displayed.
         """
+        model = QStringListModel()
         if education:
-            self.ui.listEducation.clear()
-            for edu in education:
-                self.ui.listEducation.addItem(edu)
+            model.setStringList(education)
         else:
-            self.ui.listEducation.addItem("No education listed")
+            model.setStringList(["No education listed"])
+        self.ui.listEducation.setModel(model)
 
 class MainWindow(QMainWindow):
     def __init__(self):

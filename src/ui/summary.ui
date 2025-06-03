@@ -294,7 +294,7 @@ QScrollArea &gt; QWidget {
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-517</y>
+        <y>-325</y>
         <width>768</width>
         <height>971</height>
        </rect>
@@ -418,7 +418,7 @@ QScrollArea &gt; QWidget {
              <number>15</number>
             </property>
             <item>
-             <widget class="QListWidget" name="listSkill"/>
+             <widget class="QListView" name="listSkill"/>
             </item>
            </layout>
           </widget>
@@ -442,7 +442,7 @@ QScrollArea &gt; QWidget {
              <number>15</number>
             </property>
             <item>
-             <widget class="QListWidget" name="listExperience"/>
+             <widget class="QListView" name="listExperience"/>
             </item>
            </layout>
           </widget>
@@ -468,7 +468,7 @@ QScrollArea &gt; QWidget {
            <number>15</number>
           </property>
           <item>
-           <widget class="QListWidget" name="listEducation"/>
+           <widget class="QListView" name="listEducation"/>
           </item>
          </layout>
         </widget>
