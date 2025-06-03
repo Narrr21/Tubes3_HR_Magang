@@ -117,31 +117,33 @@ def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) ->
             text="Quantum possibilities dance beneath the surface of everyday decisions, subtly influencing outcomes in ways no deterministic algorithm can entirely predict or explain."
         )
     ]
-    fuzzy = True
-    exact_time = None
-    fuzzy_time = None
+    exact_time = 0
+    fuzzy_time = 0
     results = []
     ## KMP
     if (algorithm == "KMP"):
-        start_time = time.time()
         for data in search:
+            start_time = time.time()
             res = ResultData(id=data.id, name=data.name, keywords={})
+            for key in keyword:
+                res.keywords[key] = 0
             kmp = KMP("")
             res.keywords = kmp.search_multi_pattern(data.text, keyword)
-            if not res.keywords == {}:
-                fuzzy = False
+            exact_time += (time.time() - start_time) * 1000
+            for key in keyword:
+                if res.keywords[key] == 0:
+                    # TODO: do a fuzzy match for this key
+                    # fuzzy_match(key);
+                    ...
             results.append(res)
-        exact_time = time.time() - start_time
     elif (algorithm == "BM"):
         ...
     else:
         ...
     
-    if fuzzy:
-        # TODO: fuzzy match here
-        ...
-    
-    return results[:limit], exact_time, fuzzy_time
+    # TODO: sorting results based on keyword occurences
+
+    return results[:limit], round(exact_time, 6), round(fuzzy_time, 6)
     # Placeholder dummy results simulating keyword matches
     # results = [
     #     ResultData(id=1, name="John Doe", keywords={"Python": 5, "Data Analysis": 3}),

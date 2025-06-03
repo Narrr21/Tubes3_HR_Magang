@@ -256,7 +256,7 @@ class MainWindow(QMainWindow):
         self.ui.btnViewCV.setEnabled(False)
 
         # Simulated in-memory "database" of uploaded CVs
-        self.uploaded_cvs = []  # Each item: dict with keys 'filename' and 'upload_time' (datetime)
+        self.uploaded_cvs = []
 
         # Load initial DB info
         self.load_database_info()
@@ -414,12 +414,12 @@ class MainWindow(QMainWindow):
             self.ui.listResults.addItem(item)
 
         if exact_time != None:
-            self.ui.lblExactMatchTime.setText("🎯 Exact Match : " + exact_time + " ms")  # placeholder
+            self.ui.lblExactMatchTime.setText("🎯 Exact Match : " + str(exact_time) + " ms")  # placeholder
         else:
             self.ui.lblExactMatchTime.setText("🎯 Exact Match : -ms")
 
         if fuzzy_time != None:
-            self.ui.lblFuzzyMatchTime.setText("🔍 Fuzzy Match : " + fuzzy_time + " ms")  # placeholder
+            self.ui.lblFuzzyMatchTime.setText("🔍 Fuzzy Match : " + str(fuzzy_time) + " ms")  # placeholder
         else:
             self.ui.lblFuzzyMatchTime.setText("🔍 Fuzzy Match : -ms")
         
