@@ -19,7 +19,6 @@ from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import Qt
 from ui.home import Ui_MainWindow
 from ui.summary import Ui_SummaryWindow  # Assuming you have a separate summary UI file
-from ui.cv import Ui_CVViewerWindow  # Assuming yrou have a separate CV UI file
 # from db import get_connection  # Uncomment and implement when ready
 
 class CVWindow(QDialog):
