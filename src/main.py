@@ -127,7 +127,7 @@ class SummaryWindow(QDialog):
     def set_summary_data(self, summary_data):
         """
         Set the summary data to be displayed in the summary window.
-        :param data: Dictionary containing summary information.
+        :param data: Long string containing the summary information.
         """
         # Example of setting data, adjust according to your UI design
         self.ui.textSummary.setText(summary_data)
@@ -143,7 +143,9 @@ class SummaryWindow(QDialog):
     def set_personal_info(self, email = None, phone = None, address = None):
         """
         Set personal information to be displayed in the summary.
-        :param info: Dictionary containing personal information.
+        :param email: Email address of the applicant.
+        :param phone: Phone number of the applicant.
+        :param address: Address of the applicant.
         """
         if email:
             self.ui.lblEmail.setText("Email: " + email)
@@ -161,7 +163,7 @@ class SummaryWindow(QDialog):
     def set_skills(self, skills):
         """
         Set the skills to be displayed in the summary.
-        :param skills: List of skills.
+        :param skills: List of skills (strings) to be displayed.
         """
         if skills:
             self.ui.listSkill.clear()
@@ -173,7 +175,7 @@ class SummaryWindow(QDialog):
     def set_experience(self, experience):
         """
         Set the work experience to be displayed in the summary.
-        :param experience: List of work experience entries.
+        :param experience: List of work experience (strings) to be displayed.
         """
         if experience:
             self.ui.listExperience.clear()
@@ -185,7 +187,7 @@ class SummaryWindow(QDialog):
     def set_education(self, education):
         """
         Set the education details to be displayed in the summary.
-        :param education: List of education entries.
+        :param education: List of education (strings) to be displayed.
         """
         if education:
             self.ui.listEducation.clear()
@@ -277,6 +279,9 @@ class MainWindow(QMainWindow):
     def get_file_path(self):
         return self.ui.lineEditFilePath.text().strip()
     
+    def get_id_applicant(self):
+        return self.ui.inputIDApplicants.text().strip()
+    
     def handle_upload_button(self):
         file_path = os.path.basename(self.get_file_path())
         if not file_path:
@@ -290,14 +295,25 @@ class MainWindow(QMainWindow):
             # Simulate adding this file to "database"
             now = datetime.now()
             filename = file_path.split("/")[-1]  # Extract filename from path
-            print(f"[UPLOAD] Uploading file: {filename} at {now}")
+            id_applicant = self.get_id_applicant()  # Placeholder for ID applicant retrieval logic
+
+            # TODO: Validate id_applicant before proceeding
+            
+            if not filename.lower().endswith('.pdf'):
+                QMessageBox.warning(self, "File Error", "Only PDF files are allowed.")
+                self.ui.lineEditFilePath.clear()  # Clear file path input
+                self.ui.inputIDApplicants.clear()  # Clear ID input
+                return
+
+            print(f"[UPLOAD] Uploading file: {filename} at {now} by id applicant {id_applicant}")  # DEBUG
             self.uploaded_cvs.append({
                 "filename": filename,
                 "upload_time": now
             })
 
-            # QMessageBox.information(self, "Upload Info", f"File '{filename}' uploaded successfully.")
             self.ui.lineEditFilePath.clear()  # Clear file path input
+            self.ui.inputIDApplicants.clear()  # Clear ID input
+            print(f"[UPLOAD] File {filename} uploaded successfully at {now}.")  # DEBUG
             self.load_database_info()  # Refresh DB info after upload
 
         except Exception as e:

@@ -323,12 +323,15 @@ QStatusBar {
      <property name="placeholderText">
       <string>📄 Select PDF file to upload...</string>
      </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
     </widget>
     <widget class="QPushButton" name="btnBrowse">
      <property name="geometry">
       <rect>
        <x>450</x>
-       <y>40</y>
+       <y>60</y>
        <width>100</width>
        <height>35</height>
       </rect>
@@ -344,7 +347,7 @@ QStatusBar {
      <property name="geometry">
       <rect>
        <x>560</x>
-       <y>40</y>
+       <y>60</y>
        <width>100</width>
        <height>35</height>
       </rect>
@@ -356,20 +359,23 @@ QStatusBar {
       <string>⬆️ Upload</string>
      </property>
     </widget>
-    <widget class="QLabel" name="lblUploadStatus">
+    <widget class="QLineEdit" name="inputIDApplicants">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>85</y>
-       <width>640</width>
-       <height>25</height>
+       <y>80</y>
+       <width>421</width>
+       <height>31</height>
       </rect>
      </property>
-     <property name="styleSheet">
-      <string notr="true">color: #6b7280; font-style: italic;</string>
+     <property name="readOnly">
+      <bool>false</bool>
      </property>
-     <property name="text">
-      <string>💡 Tip: Supported formats: PDF, DOC, DOCX</string>
+     <property name="placeholderText">
+      <string>Enter ID Applicants</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>
