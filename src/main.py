@@ -1,6 +1,7 @@
 import sys
 import os
 import fitz  
+import re
 from datetime import datetime
 from PyQt5.QtWidgets import (
     QApplication, 
@@ -335,10 +336,18 @@ class MainWindow(QMainWindow):
         return self.ui.spinResultLimit.value()
 
     def get_keywords(self):
-        text = self.ui.inputKeywords.text().strip()
-        if text:
-            return [text]
-        return []
+        raw_text = self.ui.inputKeywords.text()
+        words = re.split(r'[,\s]+', raw_text.strip())
+        keywords = [word for word in words if word]
+        print(f"[KEYWORDS] Parsed keywords: {keywords}")  # DEBUG
+
+        if keywords:
+            return keywords
+        else:
+            QMessageBox.warning(self, "Input Error", "Please enter at least one keyword.")
+            self.ui.inputKeywords.clear()
+            return []
+
 
     def handle_search_button(self):
         algorithm = self.get_selected_algorithm()

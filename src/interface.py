@@ -65,13 +65,13 @@ def get_file_path(id: int) -> str:
     file_path = "./data/tes_pdf.pdf"
     return file_path
 
-def run_search_algorithm(algorithm: str, query: str, limit: int = 10) -> List[ResultData]:
+def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) -> List[ResultData]:
     """
     Runs the specified search algorithm with the given query.
 
     Args:
         algorithm (str): The name of the search algorithm to run.
-        query (str): The search query.
+        keyword (list of string): Keywords that need to be searched.
         limit (int, optional): The maximum number of results to return. Defaults to 10.
 
     Returns:
