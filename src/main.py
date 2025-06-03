@@ -13,13 +13,19 @@ from PyQt5.QtWidgets import (
     QHBoxLayout, 
     QLabel, 
     QScrollArea,
-    QPushButton
+    QPushButton,
+    QListWidgetItem
 )
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import Qt
 from ui.home import Ui_MainWindow
 from ui.summary import Ui_SummaryWindow  # Assuming you have a separate summary UI file
 # from db import get_connection  # Uncomment and implement when ready
+from interface import (
+    get_summary_data, # get summary data from database by id
+    get_file_path,    # get file path of CV from database by id
+    run_search_algorithm  # run search algorithm on keywords
+)
 
 class CVWindow(QDialog):
     def __init__(self, file_path, parent=None):
@@ -91,17 +97,9 @@ class SummaryWindow(QDialog):
         self.ui.setupUi(self)
 
         # TODO: find nama, email, phone, address, skills, experience, education from database using id
-
-        #placeholder data
-        summary_daya = "This is a summary of the CV or result being displayed."
-        nama = "John Doe"
-        email = "John@email.com"
-        # phone = "123-456-7890"
-        address = "123 Main St, City, Country"
-        skills = ["Python", "Data Analysis", "Machine Learning"]
-        experience = ["Company A - Data Scientist (2020-2022)", "Company B - Software Engineer (2018-2020)"]
-        education = ["B.Sc. in Computer Science - University X (2014-2018)", "M.Sc. in Data Science - University Y (2018-2020)"]
-        self.set_summary_data(summary_daya)
+        nama, email, phone, address, skills, experience, education, summary = get_summary_data(id)
+        
+        self.set_summary_data(summary)
         self.set_name(nama)
         self.set_personal_info(email=email,address=address) # Try phone none
         self.set_skills(skills)
@@ -115,9 +113,8 @@ class SummaryWindow(QDialog):
         Opens a new CV viewer window.
         """
         # TODO: Get the file path of the CV associated with the selected result
+        file_path = get_file_path(id)
 
-        # placeholder file path
-        file_path = "./data/tes_pdf.pdf"  # Replace with actual file path from database
         # Open a new CV viewer window
         cv_window = CVWindow(file_path, self)
         cv_window.show()
@@ -356,22 +353,27 @@ class MainWindow(QMainWindow):
             return
 
         # TODO: Run selected search algorithm on keywords here
+        results = run_search_algorithm(algorithm, keywords, limit)
 
-        # Placeholder: simulate search results
-        dummy_results = [f"Result {i+1} for '{keywords[0]}'" for i in range(limit)]
-
-        # Populate the results list
         self.ui.listResults.clear()
-        for res in dummy_results:
-            self.ui.listResults.addItem(res)
+        for res in results:
+            display_text = f"{res.name} (ID: {res.id})"
+            if res.keywords:
+                display_text += " - Keywords: " + ", ".join(f"{k} ({v})" for k, v in res.keywords.items())
+            else:
+                display_text += " - No keywords found"
+            item = QListWidgetItem(display_text)
+            item.setData(Qt.UserRole, res)  # Store full object or a dict
+            self.ui.listResults.addItem(item)
+
 
         # Update performance labels (placeholders)
         self.ui.lblExactMatchTime.setText("🎯 Exact Match : 0.123 ms")  # placeholder
         self.ui.lblFuzzyMatchTime.setText("🔍 Fuzzy Match : 0.456 ms")  # placeholder
 
-        self.ui.lblTotalResults.setText(f"📊 Total Results: {len(dummy_results)}")
-        self.ui.btnViewSummary.setEnabled(len(dummy_results) > 0)
-        self.ui.btnViewCV.setEnabled(len(dummy_results) > 0)
+        self.ui.lblTotalResults.setText(f"📊 Total Results: {len(results)}")
+        self.ui.btnViewSummary.setEnabled(len(results) > 0)
+        self.ui.btnViewCV.setEnabled(len(results) > 0)
 
     def handle_clear_button(self):
         self.ui.inputKeywords.clear()
@@ -388,10 +390,10 @@ class MainWindow(QMainWindow):
     def handle_view_summary(self):
         selected = self.get_selected_result()
         if selected:
-            print(f"[VIEW SUMMARY] Selected result: {selected}")
+            print(f"[VIEW SUMMARY] Selected result: name={selected.name}, id={selected.id}")
 
             # Open a new summary window
-            summary_window = SummaryWindow(self)
+            summary_window = SummaryWindow(self, id=selected.id)
             summary_window.show()
         else:
             QMessageBox.warning(self, "No Selection", "Please select a result first.")
@@ -400,12 +402,11 @@ class MainWindow(QMainWindow):
     def handle_view_cv(self):
         selected = self.get_selected_result()
         if selected:
-            print(f"[VIEW CV] Selected result: {selected}")
+            print(f"[VIEW CV] Selected result: name={selected.name}, id={selected.id}")
 
             # TODO: Get the file path of the CV associated with the selected result
+            file_path = get_file_path(selected.id)
 
-            # placeholder file path
-            file_path = "./data/tes_pdf.pdf"  # Replace with actual file path from database
             # Open a new CV viewer window
             cv_window = CVWindow(file_path, self)
             cv_window.show()
@@ -415,7 +416,8 @@ class MainWindow(QMainWindow):
     def get_selected_result(self):
         selected_items = self.ui.listResults.selectedItems()
         if selected_items:
-            return selected_items[0].text()
+            res = selected_items[0].data(Qt.UserRole)
+            return res
         return None
 
 if __name__ == "__main__":
