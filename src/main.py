@@ -15,59 +15,19 @@ from PyQt5.QtWidgets import (
     QLabel, 
     QScrollArea,
     QPushButton,
-    QListWidgetItem
+    QListWidgetItem,
 )
 from PyQt5.QtGui import QPixmap, QImage
-from PyQt5.QtCore import Qt, QStringListModel
+from PyQt5.QtCore import Qt, QStringListModel, QTimer
 from ui.home import Ui_MainWindow
 from ui.summary import Ui_SummaryWindow  # Assuming you have a separate summary UI file
 # from db import get_connection  # Uncomment and implement when ready
+from ui.toast import Toast  # Assuming you have a Toast class for notifications
 from interface import (
     get_summary_data, # get summary data from database by id
     get_file_path,    # get file path of CV from database by id
     run_search_algorithm  # run search algorithm on keywords
 )
-
-from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget, QApplication
-from PyQt5.QtCore import Qt, QTimer, QPoint, QPropertyAnimation
-
-class Toast(QWidget):
-    def __init__(self, message, duration=3000, parent=None):
-        super().__init__(parent)
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.ToolTip)
-        self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setStyleSheet("""
-            background-color: rgba(255, 200, 0, 220);
-            color: black;
-            border-radius: 10px;
-            padding: 10px;
-            font-size: 14px;
-        """)
-
-        layout = QVBoxLayout()
-        label = QLabel(message)
-        label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(label)
-        self.setLayout(layout)
-        self.adjustSize()
-
-        # fade-in/out animation
-        self.animation = QPropertyAnimation(self, b"windowOpacity")
-        self.animation.setDuration(500)
-        self.animation.setStartValue(0)
-        self.animation.setEndValue(1)
-        self.animation.start()
-
-        # Auto-close after duration
-        QTimer.singleShot(duration, self.close)
-
-    def show_above(self, parent_widget):
-        # Show popup
-        parent_pos = parent_widget.mapToGlobal(QPoint(0, 0))
-        x = parent_pos.x() + (parent_widget.width() - self.width()) // 2
-        y = parent_pos.y() + 10  # 10px from top
-        self.move(x, y)
-        self.show()
 
 class CVWindow(QDialog):
     def __init__(self, file_path, parent=None):
@@ -315,8 +275,28 @@ class MainWindow(QMainWindow):
     def get_file_path(self):
         return self.ui.lineEditFilePath.text().strip()
     
+    def fade_border(self, widget=None):
+        steps = 10
+        interval = 200  # ms
+        for i in range(steps):
+            opacity = 1 - i / steps
+            red_value = int(255 * opacity)
+            style = f"border: 2px solid rgba({red_value}, 0, 0, 150);"
+            QTimer.singleShot(i * interval, lambda s=style: widget.setStyleSheet(s))
+        QTimer.singleShot(steps * interval, lambda: widget.setStyleSheet(""))
+
     def get_id_applicant(self):
-        return self.ui.inputIDApplicants.text().strip()
+        text = self.ui.inputIDApplicants.text().strip()
+        if not text.isdigit():
+            self.fade_border(self.ui.inputIDApplicants)
+            toast = Toast("Please enter a valid ID applicant", duration=3000, parent=self)
+            toast.show_above(self)
+            return None
+        else:
+            # Valid input
+            self.ui.inputIDApplicants.setStyleSheet("")
+            return text
+
     
     def handle_upload_button(self):
         file_path = os.path.basename(self.get_file_path())
@@ -339,8 +319,12 @@ class MainWindow(QMainWindow):
             if not filename.lower().endswith('.pdf'):
                 toast = Toast("Only PDF files are allowed", duration=3000, parent=self)
                 toast.show_above(self)
+                self.fade_border(self.ui.lineEditFilePath)
                 self.ui.lineEditFilePath.clear()  # Clear file path input
                 self.ui.inputIDApplicants.clear()  # Clear ID input
+                return
+            
+            if not id_applicant:
                 return
 
             print(f"[UPLOAD] Uploading file: {filename} at {now} by id applicant {id_applicant}")  # DEBUG
@@ -396,6 +380,7 @@ class MainWindow(QMainWindow):
         print(f"[SEARCH] Searching with {algorithm} for keywords: {', '.join(keywords)} (Limit: {limit})")
 
         if not keywords:
+            self.fade_border(self.ui.inputKeywords)
             toast = Toast("Please enter keyword to search", duration=3000, parent=self)
             toast.show_above(self)
             return
