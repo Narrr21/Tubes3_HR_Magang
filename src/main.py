@@ -15,59 +15,24 @@ from PyQt5.QtWidgets import (
     QLabel, 
     QScrollArea,
     QPushButton,
-    QListWidgetItem
+    QListWidgetItem,
 )
 from PyQt5.QtGui import QPixmap, QImage
-from PyQt5.QtCore import Qt, QStringListModel
+from PyQt5.QtCore import Qt, QStringListModel, QTimer
 from ui.home import Ui_MainWindow
 from ui.summary import Ui_SummaryWindow  # Assuming you have a separate summary UI file
 # from db import get_connection  # Uncomment and implement when ready
+from ui.toast import Toast  # Assuming you have a Toast class for notifications
+from ui.wrapper import Wrapper  # Assuming you have a custom item delegate for list widgets
 from interface import (
-    get_summary_data, # get summary data from database by id
-    get_file_path,    # get file path of CV from database by id
-    run_search_algorithm  # run search algorithm on keywords
+    get_summary_data,       # get summary data from database by id
+    get_file_path,          # get file path of CV from database by id
+    run_search_algorithm,   # run search algorithm on keywords
+    add_file,               # add file to database
+    add_folder,             # add files in folder to database
+    clear_database,          # clear database
+    load_database          # load database info
 )
-
-from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget, QApplication
-from PyQt5.QtCore import Qt, QTimer, QPoint, QPropertyAnimation
-
-class Toast(QWidget):
-    def __init__(self, message, duration=3000, parent=None):
-        super().__init__(parent)
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.ToolTip)
-        self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setStyleSheet("""
-            background-color: rgba(255, 200, 0, 220);
-            color: black;
-            border-radius: 10px;
-            padding: 10px;
-            font-size: 14px;
-        """)
-
-        layout = QVBoxLayout()
-        label = QLabel(message)
-        label.setAlignment(Qt.AlignCenter)
-        layout.addWidget(label)
-        self.setLayout(layout)
-        self.adjustSize()
-
-        # fade-in/out animation
-        self.animation = QPropertyAnimation(self, b"windowOpacity")
-        self.animation.setDuration(500)
-        self.animation.setStartValue(0)
-        self.animation.setEndValue(1)
-        self.animation.start()
-
-        # Auto-close after duration
-        QTimer.singleShot(duration, self.close)
-
-    def show_above(self, parent_widget):
-        # Show popup
-        parent_pos = parent_widget.mapToGlobal(QPoint(0, 0))
-        x = parent_pos.x() + (parent_widget.width() - self.width()) // 2
-        y = parent_pos.y() + 10  # 10px from top
-        self.move(x, y)
-        self.show()
 
 class CVWindow(QDialog):
     def __init__(self, file_path, parent=None):
@@ -138,16 +103,8 @@ class SummaryWindow(QDialog):
         self.ui = Ui_SummaryWindow()
         self.ui.setupUi(self)
 
-        data = get_summary_data(id)
-        nama = data.nama
-        email = data.email
-        phone = data.phone
-        address = data.address
-        skills = data.skills
-        experience = data.experience
-        education = data.education
-        summary = data.summary   
-              
+        nama, email, phone, address, skills, experience, education, summary = get_summary_data(id)
+        
         self.set_summary_data(summary)
         self.set_name(nama)
         self.set_personal_info(email, phone, address)
@@ -213,6 +170,7 @@ class SummaryWindow(QDialog):
             model.setStringList(skills)
         else:
             model.setStringList(["No skills listed"])
+        self.ui.listSkill.setItemDelegate(Wrapper())
         self.ui.listSkill.setModel(model)
 
     def set_experience(self, experience):
@@ -225,6 +183,7 @@ class SummaryWindow(QDialog):
             model.setStringList(experience)
         else:
             model.setStringList(["No work experience listed"])
+        self.ui.listExperience.setItemDelegate(Wrapper())
         self.ui.listExperience.setModel(model)
 
     def set_education(self, education):
@@ -237,6 +196,7 @@ class SummaryWindow(QDialog):
             model.setStringList(education)
         else:
             model.setStringList(["No education listed"])
+        self.ui.listEducation.setItemDelegate(Wrapper())
         self.ui.listEducation.setModel(model)
 
 class MainWindow(QMainWindow):
@@ -274,9 +234,14 @@ class MainWindow(QMainWindow):
         """
         Clears the in-memory uploaded_cvs list and updates the UI.
         """
-        # TODO: Implement actual database clearing logic when connected
-
-        # For now, just clear the in-memory list
+        response = clear_database()  # Call to clear the database in the backend
+        if not response:
+            toast = Toast("Failed to clear database", duration=3000, parent=self)
+            toast.show_above(self)
+            return
+        else:
+            toast = Toast("Database cleared successfully", duration=3000, parent=self)
+            toast.show_above(self)
         self.uploaded_cvs.clear()
         self.ui.lblTotalCVs.setText("Total CVs: 0")
         self.ui.lblLastUpload.setText("Last Upload: N/A")
@@ -288,6 +253,11 @@ class MainWindow(QMainWindow):
         Loads the database info from the in-memory uploaded_cvs list.
         Updates UI labels and recent uploads list.
         """
+        response = load_database()
+        if not response:
+            toast = Toast("Failed to load database info", duration=3000, parent=self)
+            toast.show_above(self)
+            return
         total_cvs = len(self.uploaded_cvs)
         last_upload = (
             max(self.uploaded_cvs, key=lambda x: x["upload_time"])["upload_time"].strftime("%Y-%m-%d %H:%M:%S")
@@ -313,30 +283,61 @@ class MainWindow(QMainWindow):
 
     ## <----------------UPLOAD HANDLERS-------------------------------------------------------------------------------->
     def handle_browse_button(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select File", "", "All Files (*)")
-        if file_path:
-            self.ui.lineEditFilePath.setText(file_path)
-        else:
-            toast = Toast("No file selected.", duration=3000, parent=self)
-            toast.show_above(self)
+        if self.ui.checkFolderMode.isChecked():  # Folder mode
+            folder_path = QFileDialog.getExistingDirectory(self, "Select Folder", "")
+            if folder_path:
+                self.ui.lineEditFilePath.setText(folder_path)
+            else:
+                toast = Toast("No folder selected.", duration=3000, parent=self)
+                toast.show_above(self)
+        else:  # File mode
+            file_path, _ = QFileDialog.getOpenFileName(self, "Select File", "", "All Files (*)")
+            if file_path:
+                self.ui.lineEditFilePath.setText(file_path)
+            else:
+                toast = Toast("No file selected.", duration=3000, parent=self)
+                toast.show_above(self)
+
+
 
     def get_file_path(self):
         return self.ui.lineEditFilePath.text().strip()
     
+    def fade_border(self, widget=None):
+        steps = 10
+        interval = 200  # ms
+        for i in range(steps):
+            opacity = 1 - i / steps
+            red_value = int(255 * opacity)
+            style = f"border: 2px solid rgba({red_value}, 0, 0, 150);"
+            QTimer.singleShot(i * interval, lambda s=style: widget.setStyleSheet(s))
+        QTimer.singleShot(steps * interval, lambda: widget.setStyleSheet(""))
+
     def get_id_applicant(self):
-        return self.ui.inputIDApplicants.text().strip()
+        text = self.ui.inputIDApplicants.text().strip()
+        if not text.isdigit():
+            self.fade_border(self.ui.inputIDApplicants)
+            toast = Toast("Please enter a valid ID applicant", duration=3000, parent=self)
+            toast.show_above(self)
+            return None
+        else:
+            # Valid input
+            self.ui.inputIDApplicants.setStyleSheet("")
+            return text
+
     
     def handle_upload_button(self):
         file_path = os.path.basename(self.get_file_path())
+        if self.ui.checkFolderMode.isChecked():
+            self.handle_upload_folder()
+            return
         if not file_path:
             toast = Toast("Please select a file to upload", duration=3000, parent=self)
             toast.show_above(self)
+            self.fade_border(self.ui.lineEditFilePath)
             return
 
         try:
-            # TODO: Parse the file (CSV, JSON, etc.)
-            # TODO: Store parsed data into database via get_connection()
-
             # Simulate adding this file to "database"
             now = datetime.now()
             filename = file_path.split("/")[-1]  # Extract filename from path
@@ -347,8 +348,22 @@ class MainWindow(QMainWindow):
             if not filename.lower().endswith('.pdf'):
                 toast = Toast("Only PDF files are allowed", duration=3000, parent=self)
                 toast.show_above(self)
+                self.fade_border(self.ui.lineEditFilePath)
                 self.ui.lineEditFilePath.clear()  # Clear file path input
                 self.ui.inputIDApplicants.clear()  # Clear ID input
+                return
+            
+            if not id_applicant:
+                return
+            
+            response = add_file(file_path, id_applicant)
+
+            if response:
+                toast = Toast("File uploaded successfully", duration=3000, parent=self)
+                toast.show_above(self)
+            else:
+                toast = Toast("Failed to upload file", duration=3000, parent=self)
+                toast.show_above(self)
                 return
 
             print(f"[UPLOAD] Uploading file: {filename} at {now} by id applicant {id_applicant}")  # DEBUG
@@ -363,8 +378,34 @@ class MainWindow(QMainWindow):
             self.load_database_info()  # Refresh DB info after upload
 
         except Exception as e:
-            QMessageBox.critical(self, "Upload Error", f"Failed to upload file:\n{e}")
+            toast = Toast("Failed to upload file:\n" + str(e), duration=3000, parent=self)
+            toast.show_above(self)
     
+    def handle_upload_folder(self):
+        folder_path = self.get_file_path()
+        if not folder_path:
+            toast = Toast("Please select a folder to upload", duration=3000, parent=self)
+            toast.show_above(self)
+            self.fade_border(self.ui.lineEditFilePath)
+            return
+
+        try:
+            folderName = os.path.basename(folder_path)  # Extract folder name from path
+            response = add_folder(folder_path, self.uploaded_cvs)
+
+            if response:
+                toast = Toast("Folder uploaded successfully", duration=3000, parent=self)
+                toast.show_above(self)
+            else:
+                toast = Toast("Failed to upload file", duration=3000, parent=self)
+                toast.show_above(self)
+                return
+            self.ui.lineEditFilePath.clear()  # Clear file path input
+            print(f"[UPLOAD] Folder {folderName} uploaded successfully.")  # DEBUG
+        except Exception as e:
+            toast = Toast("Failed to upload folder:\n" + str(e), duration=3000, parent=self)
+            toast.show_above(self)
+
     def handle_action_upload_cvs(self):
         self.handle_browse_button()  # Trigger browse
         if self.get_file_path():
@@ -375,7 +416,7 @@ class MainWindow(QMainWindow):
         if self.ui.radioKMP.isChecked():
             return "KMP"
         elif self.ui.radioBoyerMoore.isChecked():
-            return "Boyer-Moore"
+            return "BM"
         elif self.ui.radioAhoCorasick.isChecked():
             return "Aho-Corasick"
         return None
@@ -404,6 +445,7 @@ class MainWindow(QMainWindow):
         print(f"[SEARCH] Searching with {algorithm} for keywords: {', '.join(keywords)} (Limit: {limit})")
 
         if not keywords:
+            self.fade_border(self.ui.inputKeywords)
             toast = Toast("Please enter keyword to search", duration=3000, parent=self)
             toast.show_above(self)
             return

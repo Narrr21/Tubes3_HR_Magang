@@ -1,6 +1,10 @@
 from typing import List
-from KMP import KMP
+from algorithms.KMP import KMP
+from algorithms.BM import BM
+from algorithms.AhoCorasick import AhoCorasick
+from algorithms.Levenshtein import Levenshtein
 import time
+import os
 from db import *
 
 # DATA STRUCTURES
@@ -14,18 +18,28 @@ class SummaryData():
         self.experience = experience
         self.education = education
         self.summary = summary
+    
+    def to_string(self) -> str:
+        return f"[SUMMARY] Nama: {self.nama}\nEmail: {self.email}\nPhone: {self.phone}\nAddress: {self.address}\nSkills: {', '.join(self.skills)}\nExperience: {', '.join(self.experience)}\nEducation: {', '.join(self.education)}\nSummary: {self.summary}"
 
 class ResultData():
     def __init__(self, id: int, name: str, keywords: dict[str, int]):
         self.id = id
         self.name = name
         self.keywords = keywords
+    
+    def to_string(self) -> str:
+        keywords_str = ', '.join([f"{key}: {value}" for key, value in self.keywords.items()])
+        return f"[RESULT] ID: {self.id}\nName: {self.name}\nKeywords: {keywords_str}"
 
 class SearchData():
     def __init__(self, id: int, name: str, text: str):
         self.id = id
         self.name = name
         self.text = text
+
+    def to_string(self) -> str:
+        return f"[SEARCH] ID: {self.id}\nName: {self.name}\nText: {self.text}"
 
 
 # FUNCTION DEFINITIONS
@@ -77,6 +91,30 @@ def get_file_path(id: int) -> str:
     return get_cv_path_by_id(id)
 
 
+def fuzzy_match(keyword: str, text: str) -> int:
+    """
+    Performs a fuzzy match for the given keyword.
+    Args:
+        keyword (str): The keyword to be matched.
+        text (str): The text in which to search for the keyword.
+    Returns:
+        int: The number of matches found.
+    """
+    lv = Levenshtein()
+    return lv.count_occurrence(text, keyword)
+
+def fuzzy_match(keyword: str, text: str) -> int:
+    """
+    Performs a fuzzy match for the given keyword.
+    Args:
+        keyword (str): The keyword to be matched.
+        text (str): The text in which to search for the keyword.
+    Returns:
+        int: The number of matches found.
+    """
+    lv = Levenshtein()
+    return lv.count_occurrence(text, keyword)
+
 def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) -> tuple[List[ResultData], int, int]:
     """
     Runs the specified search algorithm with the given query.
@@ -127,27 +165,29 @@ def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) ->
 
     exact_time = 0
     fuzzy_time = 0
+    fuzzy_search = False
     results = []
-    ## KMP
-    if (algorithm == "KMP"):
-        for data in search:
-            start_time = time.time()
-            res = ResultData(id=data.id, name=data.name, keywords={})
-            for key in keyword:
-                res.keywords[key] = 0
-            kmp = KMP("")
-            res.keywords = kmp.search_multi_pattern(data.text, keyword)
-            exact_time += (time.time() - start_time) * 1000
-            for key in keyword:
-                if res.keywords[key] == 0:
-                    # TODO: do a fuzzy match for this key
-                    # fuzzy_match(key);
-                    ...
-            results.append(res)
-    elif (algorithm == "BM"):
-        ...
-    else:
-        ...
+    
+    for data in search:
+        start_time = time.time()
+        res = ResultData(id=data.id, name=data.name, keywords={})
+        for key in keyword:
+            res.keywords[key] = 0
+
+        if (algorithm == "KMP"):
+            res.keywords = KMP.search_multi_pattern(data.text, keyword)
+        elif (algorithm == "BM"):
+            res.keywords = BM.search_multi_pattern(data.text, keyword)
+        elif (algorithm == "AhoCorasick"):
+             res.keywords = AhoCorasick.search_multi_pattern(data.text, keyword)
+        exact_time += (time.time() - start_time) * 1000
+        for key in keyword:
+            if res.keywords[key] == 0:
+                start_time = time.time()
+                res.keywords = Levenshtein.search_multi_pattern(data.text, keyword)
+                fuzzy_time += (time.time() - start_time) * 1000
+        results.append(res)
+    
     
     # TODO: sorting results based on keyword occurences
 
@@ -160,3 +200,82 @@ def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) ->
     #     ResultData(id=4, name="Bob Brown", keywords={"Software Engineering": 3, "Python": 2}),
     # ]
     # return results[:limit], 123, 456
+
+def add_file(path_to_file:str, id_applicant: int) -> bool:
+    """
+    Adds a file to the database.
+    Args:
+        path_to_file (str): The path to the file to be added.
+        id_applicant (int): The ID of the applicant to whom the file belongs.
+    Returns:
+        bool: True if the file was added successfully, False otherwise.
+    """
+    try:
+        if not os.path.exists(path_to_file):
+            raise FileNotFoundError(f"File {path_to_file} does not exist.")
+        
+        # TODO: Implement the logic to add the file to the database
+        
+        print(f"File {path_to_file} added to the database.")
+    except Exception as e:
+        print(f"Error adding file: {e}")
+        return False
+    return True
+
+def add_folder(path_to_folder:str, uploaded_cvs:list[dict]) -> bool:
+    """
+    Adds all files in a folder to the database.
+    Args:
+        path_to_folder (str): The path to the folder containing files to be added.
+    Returns:
+        bool: True if the files were added successfully, False otherwise.
+    """
+    try :
+        if not os.path.exists(path_to_folder):
+            raise FileNotFoundError(f"Folder {path_to_folder} does not exist.")
+        
+        # TODO: Implement the logic to add all files in the folder to the database
+
+        print(f"All files in folder {path_to_folder} added to the database.")
+        # Update Frontend
+        for file in os.listdir(path_to_folder):
+            if file.endswith(".pdf"):
+                filename = os.path.join(path_to_folder, file)
+                now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                uploaded_cvs.append({
+                    "filename": filename,
+                    "upload_time": now
+                })
+        return True
+    except Exception as e:
+        print(f"Error adding folder: {e}")
+        return False
+
+def clear_database() -> bool:
+    """
+    Clears the database.
+    Returns:
+        bool: True if the database was cleared successfully, False otherwise.
+    """
+    try:
+        # TODO: Implement the logic to clear the database
+
+        return True
+    except Exception as e:
+        print(f"Error clearing database: {e}")
+        return False
+
+def load_database() -> bool:
+    """
+    Loads the database.
+    Returns:
+        bool: True if the database was loaded successfully, False otherwise.
+    """
+    try:
+        # TODO: Implement the logic to load the database
+
+        print("Database loaded successfully.")
+        return True
+    except Exception as e:
+        print(f"Error loading database: {e}")
+        return False

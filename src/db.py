@@ -5,6 +5,8 @@ import fitz
 import re
 import os
 from faker import Faker
+from dotenv import load_dotenv
+import os
 
 class SummaryData():
     def __init__(self, nama: str, email: str, phone: str, address: str, skills: List[str], experience: List[str], education: List[str], summary: str):
@@ -126,24 +128,31 @@ def extract_summary_data_from_pdf(file_path: str) -> SummaryData:
 #         password="",
 #         database="tubes3stima_db"
 #     )
+
+load_dotenv()
+DB_HOST = os.getenv("DB_HOST")
+DB_USER = os.getenv("DB_USER")
+DB_PASS = os.getenv("DB_PASS")
+DB_NAME = os.getenv("DB_NAME")
+
 def get_connection():
     temp_conn = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="tubes3stima_db"
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASS,
+        database=DB_NAME
     )
     temp_cursor = temp_conn.cursor()
-    temp_cursor.execute("CREATE DATABASE IF NOT EXISTS tubes3stima_db")
+    temp_cursor.execute("CREATE DATABASE IF NOT EXISTS {DB_NAME}")
     temp_conn.commit()
     temp_cursor.close()
     temp_conn.close()
 
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="tubes3stima_db"
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASS,
+        database=DB_NAME
     )
 
 def reset_tables():

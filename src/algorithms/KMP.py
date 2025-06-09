@@ -94,7 +94,8 @@ class KMP:
         
         return positions
     
-    def search_multi_pattern(self, text, patterns:list[str]) -> dict[str, int]:
+    @staticmethod
+    def search_multi_pattern(text, patterns:list[str]) -> dict[str, int]:
         """
         Searches for multiple patterns in the text and returns a dictionary with pattern counts.
         """
