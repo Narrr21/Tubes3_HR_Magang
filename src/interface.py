@@ -16,18 +16,28 @@ class SummaryData():
         self.experience = experience
         self.education = education
         self.summary = summary
+    
+    def to_string(self) -> str:
+        return f"[SUMMARY] Nama: {self.nama}\nEmail: {self.email}\nPhone: {self.phone}\nAddress: {self.address}\nSkills: {', '.join(self.skills)}\nExperience: {', '.join(self.experience)}\nEducation: {', '.join(self.education)}\nSummary: {self.summary}"
 
 class ResultData():
     def __init__(self, id: int, name: str, keywords: dict[str, int]):
         self.id = id
         self.name = name
         self.keywords = keywords
+    
+    def to_string(self) -> str:
+        keywords_str = ', '.join([f"{key}: {value}" for key, value in self.keywords.items()])
+        return f"[RESULT] ID: {self.id}\nName: {self.name}\nKeywords: {keywords_str}"
 
 class SearchData():
     def __init__(self, id: int, name: str, text: str):
         self.id = id
         self.name = name
         self.text = text
+
+    def to_string(self) -> str:
+        return f"[SEARCH] ID: {self.id}\nName: {self.name}\nText: {self.text}"
 
 
 # FUNCTION DEFINITIONS
