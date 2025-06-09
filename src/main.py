@@ -138,8 +138,16 @@ class SummaryWindow(QDialog):
         self.ui = Ui_SummaryWindow()
         self.ui.setupUi(self)
 
-        nama, email, phone, address, skills, experience, education, summary = get_summary_data(id)
-        
+        data = get_summary_data(id)
+        nama = data.nama
+        email = data.email
+        phone = data.phone
+        address = data.address
+        skills = data.skills
+        experience = data.experience
+        education = data.education
+        summary = data.summary   
+              
         self.set_summary_data(summary)
         self.set_name(nama)
         self.set_personal_info(email, phone, address)
