@@ -4,6 +4,7 @@ from algorithms.BM import BM
 from algorithms.AhoCorasick import AhoCorasick
 from algorithms.Levenshtein import Levenshtein
 import time
+import os
 
 # DATA STRUCTURES
 class SummaryData():
@@ -179,3 +180,82 @@ def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) ->
     #     ResultData(id=4, name="Bob Brown", keywords={"Software Engineering": 3, "Python": 2}),
     # ]
     # return results[:limit], 123, 456
+
+def add_file(path_to_file:str, id_applicant: int) -> bool:
+    """
+    Adds a file to the database.
+    Args:
+        path_to_file (str): The path to the file to be added.
+        id_applicant (int): The ID of the applicant to whom the file belongs.
+    Returns:
+        bool: True if the file was added successfully, False otherwise.
+    """
+    try:
+        if not os.path.exists(path_to_file):
+            raise FileNotFoundError(f"File {path_to_file} does not exist.")
+        
+        # TODO: Implement the logic to add the file to the database
+        
+        print(f"File {path_to_file} added to the database.")
+    except Exception as e:
+        print(f"Error adding file: {e}")
+        return False
+    return True
+
+def add_folder(path_to_folder:str, uploaded_cvs:list[dict]) -> bool:
+    """
+    Adds all files in a folder to the database.
+    Args:
+        path_to_folder (str): The path to the folder containing files to be added.
+    Returns:
+        bool: True if the files were added successfully, False otherwise.
+    """
+    try :
+        if not os.path.exists(path_to_folder):
+            raise FileNotFoundError(f"Folder {path_to_folder} does not exist.")
+        
+        # TODO: Implement the logic to add all files in the folder to the database
+
+        print(f"All files in folder {path_to_folder} added to the database.")
+        # Update Frontend
+        for file in os.listdir(path_to_folder):
+            if file.endswith(".pdf"):
+                filename = os.path.join(path_to_folder, file)
+                now = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                uploaded_cvs.append({
+                    "filename": filename,
+                    "upload_time": now
+                })
+        return True
+    except Exception as e:
+        print(f"Error adding folder: {e}")
+        return False
+
+def clear_database() -> bool:
+    """
+    Clears the database.
+    Returns:
+        bool: True if the database was cleared successfully, False otherwise.
+    """
+    try:
+        # TODO: Implement the logic to clear the database
+
+        return True
+    except Exception as e:
+        print(f"Error clearing database: {e}")
+        return False
+
+def load_database() -> bool:
+    """
+    Loads the database.
+    Returns:
+        bool: True if the database was loaded successfully, False otherwise.
+    """
+    try:
+        # TODO: Implement the logic to load the database
+
+        print("Database loaded successfully.")
+        return True
+    except Exception as e:
+        print(f"Error loading database: {e}")
+        return False

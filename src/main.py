@@ -16,9 +16,6 @@ from PyQt5.QtWidgets import (
     QScrollArea,
     QPushButton,
     QListWidgetItem,
-    QAbstractItemView,
-    QTreeView,
-    QListView
 )
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import Qt, QStringListModel, QTimer
@@ -28,9 +25,13 @@ from ui.summary import Ui_SummaryWindow  # Assuming you have a separate summary 
 from ui.toast import Toast  # Assuming you have a Toast class for notifications
 from ui.wrapper import Wrapper  # Assuming you have a custom item delegate for list widgets
 from interface import (
-    get_summary_data, # get summary data from database by id
-    get_file_path,    # get file path of CV from database by id
-    run_search_algorithm  # run search algorithm on keywords
+    get_summary_data,       # get summary data from database by id
+    get_file_path,          # get file path of CV from database by id
+    run_search_algorithm,   # run search algorithm on keywords
+    add_file,               # add file to database
+    add_folder,             # add files in folder to database
+    clear_database,          # clear database
+    load_database          # load database info
 )
 
 class CVWindow(QDialog):
@@ -233,9 +234,14 @@ class MainWindow(QMainWindow):
         """
         Clears the in-memory uploaded_cvs list and updates the UI.
         """
-        # TODO: Implement actual database clearing logic when connected
-
-        # For now, just clear the in-memory list
+        response = clear_database()  # Call to clear the database in the backend
+        if not response:
+            toast = Toast("Failed to clear database", duration=3000, parent=self)
+            toast.show_above(self)
+            return
+        else:
+            toast = Toast("Database cleared successfully", duration=3000, parent=self)
+            toast.show_above(self)
         self.uploaded_cvs.clear()
         self.ui.lblTotalCVs.setText("Total CVs: 0")
         self.ui.lblLastUpload.setText("Last Upload: N/A")
@@ -247,6 +253,11 @@ class MainWindow(QMainWindow):
         Loads the database info from the in-memory uploaded_cvs list.
         Updates UI labels and recent uploads list.
         """
+        response = load_database()
+        if not response:
+            toast = Toast("Failed to load database info", duration=3000, parent=self)
+            toast.show_above(self)
+            return
         total_cvs = len(self.uploaded_cvs)
         last_upload = (
             max(self.uploaded_cvs, key=lambda x: x["upload_time"])["upload_time"].strftime("%Y-%m-%d %H:%M:%S")
@@ -323,12 +334,10 @@ class MainWindow(QMainWindow):
         if not file_path:
             toast = Toast("Please select a file to upload", duration=3000, parent=self)
             toast.show_above(self)
+            self.fade_border(self.ui.lineEditFilePath)
             return
 
         try:
-            # TODO: Parse the file (CSV, JSON, etc.)
-            # TODO: Store parsed data into database via get_connection()
-
             # Simulate adding this file to "database"
             now = datetime.now()
             filename = file_path.split("/")[-1]  # Extract filename from path
@@ -346,6 +355,16 @@ class MainWindow(QMainWindow):
             
             if not id_applicant:
                 return
+            
+            response = add_file(file_path, id_applicant)
+
+            if response:
+                toast = Toast("File uploaded successfully", duration=3000, parent=self)
+                toast.show_above(self)
+            else:
+                toast = Toast("Failed to upload file", duration=3000, parent=self)
+                toast.show_above(self)
+                return
 
             print(f"[UPLOAD] Uploading file: {filename} at {now} by id applicant {id_applicant}")  # DEBUG
             self.uploaded_cvs.append({
@@ -359,7 +378,7 @@ class MainWindow(QMainWindow):
             self.load_database_info()  # Refresh DB info after upload
 
         except Exception as e:
-            toast = Toast("Failed to upload file:\n" + e, duration=3000, parent=self)
+            toast = Toast("Failed to upload file:\n" + str(e), duration=3000, parent=self)
             toast.show_above(self)
     
     def handle_upload_folder(self):
@@ -367,21 +386,24 @@ class MainWindow(QMainWindow):
         if not folder_path:
             toast = Toast("Please select a folder to upload", duration=3000, parent=self)
             toast.show_above(self)
+            self.fade_border(self.ui.lineEditFilePath)
             return
 
         try:
-            # TODO: Parse all files in the folder (CSV, JSON, etc.)
-
-            now = datetime.now()
             folderName = os.path.basename(folder_path)  # Extract folder name from path
-            id_applicant = self.get_id_applicant()
-            if not id_applicant:
+            response = add_folder(folder_path, self.uploaded_cvs)
+
+            if response:
+                toast = Toast("Folder uploaded successfully", duration=3000, parent=self)
+                toast.show_above(self)
+            else:
+                toast = Toast("Failed to upload file", duration=3000, parent=self)
+                toast.show_above(self)
                 return
             self.ui.lineEditFilePath.clear()  # Clear file path input
-            self.ui.inputIDApplicants.clear()  # Clear ID input
-            print(f"[UPLOAD] File {folderName} uploaded successfully at {now}.")  # DEBUG
+            print(f"[UPLOAD] Folder {folderName} uploaded successfully.")  # DEBUG
         except Exception as e:
-            toast = Toast("Failed to upload folder:\n" + e, duration=3000, parent=self)
+            toast = Toast("Failed to upload folder:\n" + str(e), duration=3000, parent=self)
             toast.show_above(self)
 
     def handle_action_upload_cvs(self):
