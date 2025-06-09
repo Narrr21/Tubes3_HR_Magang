@@ -23,6 +23,7 @@ from ui.home import Ui_MainWindow
 from ui.summary import Ui_SummaryWindow  # Assuming you have a separate summary UI file
 # from db import get_connection  # Uncomment and implement when ready
 from ui.toast import Toast  # Assuming you have a Toast class for notifications
+from ui.wrapper import Wrapper  # Assuming you have a custom item delegate for list widgets
 from interface import (
     get_summary_data, # get summary data from database by id
     get_file_path,    # get file path of CV from database by id
@@ -165,6 +166,7 @@ class SummaryWindow(QDialog):
             model.setStringList(skills)
         else:
             model.setStringList(["No skills listed"])
+        self.ui.listSkill.setItemDelegate(Wrapper())
         self.ui.listSkill.setModel(model)
 
     def set_experience(self, experience):
@@ -177,6 +179,7 @@ class SummaryWindow(QDialog):
             model.setStringList(experience)
         else:
             model.setStringList(["No work experience listed"])
+        self.ui.listExperience.setItemDelegate(Wrapper())
         self.ui.listExperience.setModel(model)
 
     def set_education(self, education):
@@ -189,6 +192,7 @@ class SummaryWindow(QDialog):
             model.setStringList(education)
         else:
             model.setStringList(["No education listed"])
+        self.ui.listEducation.setItemDelegate(Wrapper())
         self.ui.listEducation.setModel(model)
 
 class MainWindow(QMainWindow):

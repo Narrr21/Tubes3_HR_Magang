@@ -65,7 +65,7 @@ def get_summary_data(id:int) -> SummaryData:
         email="tes@gmail.com",
         phone="123-456-7890",
         address="123 Main St, City, Country",
-        skills=["Python", "Data Analysis", "Machine Learning"],
+        skills=["Python11111111111111111111111111111111111111111111111111111111111111111111111", "Data Analysis is aadjajdjajdjsajdjasjdsjjsdjsajdjasjdjasjdjasjdasdasdasd", "Machine Learning"],
         experience=["Company A - Data Scientist (2020-2022)", "Company B - Software Engineer (2018-2020)"],
         education=["B.Sc. in Computer Science - University X (2014-2018)", "M.Sc. in Data Science - University Y (2018-2020)"],
         summary="This is a summary of the CV or result being displayed."
