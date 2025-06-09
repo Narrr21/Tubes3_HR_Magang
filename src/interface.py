@@ -1,5 +1,7 @@
 from typing import List
 from KMP import KMP
+from BM import BM
+from Levenshtein import Levenshtein
 import time
 
 # DATA STRUCTURES
@@ -72,6 +74,18 @@ def get_file_path(id: int) -> str:
     file_path = "./data/tes_pdf.pdf"
     return file_path
 
+def fuzzy_match(keyword: str, text: str) -> int:
+    """
+    Performs a fuzzy match for the given keyword.
+    Args:
+        keyword (str): The keyword to be matched.
+        text (str): The text in which to search for the keyword.
+    Returns:
+        int: The number of matches found.
+    """
+    lv = Levenshtein()
+    return lv.count_occurrence(text, keyword)
+
 def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) -> tuple[List[ResultData], int, int]:
     """
     Runs the specified search algorithm with the given query.
@@ -132,12 +146,25 @@ def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) ->
             exact_time += (time.time() - start_time) * 1000
             for key in keyword:
                 if res.keywords[key] == 0:
-                    # TODO: do a fuzzy match for this key
-                    # fuzzy_match(key);
-                    ...
+                    start_time = time.time()
+                    res.keywords[key] = fuzzy_match(key, data.text)
+                    fuzzy_time += (time.time() - start_time) * 1000
             results.append(res)
     elif (algorithm == "BM"):
-        ...
+        for data in search:
+            start_time = time.time()
+            res = ResultData(id=data.id, name=data.name, keywords={})
+            for key in keyword:
+                res.keywords[key] = 0
+            bm = BM("")
+            res.keywords = bm.search_multi_pattern(data.text, keyword)
+            exact_time += (time.time() - start_time) * 1000
+            for key in keyword:
+                if res.keywords[key] == 0:
+                    start_time = time.time()
+                    res.keywords[key] = fuzzy_match(key, data.text)
+                    fuzzy_time += (time.time() - start_time) * 1000
+            results.append(res)
     else:
         ...
     
