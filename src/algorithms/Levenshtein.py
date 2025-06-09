@@ -42,7 +42,7 @@ class Levenshtein:
                 result.append(i)
         return result
     
-    def count_occurrence(self, text: str, pattern:str, threshold: float = 0.9):
+    def count_occurrence(self, text: str, pattern:str, threshold: float = 0.8):
         return len(self.search_positions(text, pattern, threshold))
     
     @staticmethod
@@ -91,7 +91,7 @@ class TestLevenshtein(unittest.TestCase):
         self.assertEqual(self.lev.search_positions(text, "jumps", 1.0), [20])
         self.assertEqual(self.lev.search_positions(text, pattern, 0.75), [20])
         self.assertEqual(self.lev.search_positions(text, pattern, 0.90), [20])
-        self.assertEqual(self.lev.search_positions("ababab", "aba", 1.0), [0, 2, 4])
+        self.assertEqual(self.lev.search_positions("ababab", "aba", 1.0), [0, 2])
 
     def test_count_occurrence(self):
         text = "agcatagcatagcat"
