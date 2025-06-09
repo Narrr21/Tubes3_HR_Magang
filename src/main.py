@@ -356,7 +356,7 @@ class MainWindow(QMainWindow):
             if not id_applicant:
                 return
             
-            response = add_file(file_path, id_applicant)
+            response = add_file(self.get_file_path(), id_applicant)
 
             if response:
                 toast = Toast("File uploaded successfully", duration=3000, parent=self)
