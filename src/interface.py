@@ -1,5 +1,5 @@
 from typing import List
-from KMP import KMP
+from algorithms.KMP import KMP
 from algorithms.BM import BM
 from algorithms.AhoCorasick import AhoCorasick
 from algorithms.Levenshtein import Levenshtein
@@ -136,7 +136,6 @@ def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) ->
     fuzzy_time = 0
     fuzzy_search = False
     results = []
-    ## KMP
     
     for data in search:
         start_time = time.time()
@@ -145,8 +144,7 @@ def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) ->
             res.keywords[key] = 0
 
         if (algorithm == "KMP"):
-            kmp = KMP("")
-            res.keywords = kmp.search_multi_pattern(data.text, keyword)
+            res.keywords = KMP.search_multi_pattern(data.text, keyword)
         elif (algorithm == "BM"):
             res.keywords = BM.search_multi_pattern(data.text, keyword)
         elif (algorithm == "AhoCorasick"):
