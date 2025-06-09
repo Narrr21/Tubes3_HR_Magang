@@ -1,7 +1,8 @@
 from typing import List
 from KMP import KMP
-from BM import BM
-from Levenshtein import Levenshtein
+from algorithms.BM import BM
+from algorithms.AhoCorasick import AhoCorasick
+from algorithms.Levenshtein import Levenshtein
 import time
 
 # DATA STRUCTURES
@@ -133,40 +134,34 @@ def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) ->
     ]
     exact_time = 0
     fuzzy_time = 0
+    fuzzy_search = False
     results = []
     ## KMP
-    if (algorithm == "KMP"):
-        for data in search:
-            start_time = time.time()
-            res = ResultData(id=data.id, name=data.name, keywords={})
-            for key in keyword:
-                res.keywords[key] = 0
+    
+    for data in search:
+        start_time = time.time()
+        res = ResultData(id=data.id, name=data.name, keywords={})
+        for key in keyword:
+            res.keywords[key] = 0
+
+        if (algorithm == "KMP"):
             kmp = KMP("")
             res.keywords = kmp.search_multi_pattern(data.text, keyword)
-            exact_time += (time.time() - start_time) * 1000
-            for key in keyword:
-                if res.keywords[key] == 0:
-                    start_time = time.time()
-                    res.keywords[key] = fuzzy_match(key, data.text)
-                    fuzzy_time += (time.time() - start_time) * 1000
-            results.append(res)
-    elif (algorithm == "BM"):
-        for data in search:
+        elif (algorithm == "BM"):
+            res.keywords = BM.search_multi_pattern(data.text, keyword)
+        elif (algorithm == "AhoCorasick"):
+             res.keywords = AhoCorasick.search_multi_pattern(data.text, keyword)
+        exact_time += (time.time() - start_time) * 1000
+        for key in keyword:
+            if res.keywords[key] == 0:
+                fuzzy_search = True
+
+        if fuzzy_search:
             start_time = time.time()
-            res = ResultData(id=data.id, name=data.name, keywords={})
-            for key in keyword:
-                res.keywords[key] = 0
-            bm = BM("")
-            res.keywords = bm.search_multi_pattern(data.text, keyword)
-            exact_time += (time.time() - start_time) * 1000
-            for key in keyword:
-                if res.keywords[key] == 0:
-                    start_time = time.time()
-                    res.keywords[key] = fuzzy_match(key, data.text)
-                    fuzzy_time += (time.time() - start_time) * 1000
-            results.append(res)
-    else:
-        ...
+            res.keywords = Levenshtein.search_multi_pattern(data.text, keyword)
+            fuzzy_time += (time.time() - start_time) * 1000
+        results.append(res)
+    
     
     # TODO: sorting results based on keyword occurences
 
