@@ -16,6 +16,9 @@ from PyQt5.QtWidgets import (
     QScrollArea,
     QPushButton,
     QListWidgetItem,
+    QAbstractItemView,
+    QTreeView,
+    QListView
 )
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import Qt, QStringListModel, QTimer
@@ -269,12 +272,22 @@ class MainWindow(QMainWindow):
 
     ## <----------------UPLOAD HANDLERS-------------------------------------------------------------------------------->
     def handle_browse_button(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select File", "", "All Files (*)")
-        if file_path:
-            self.ui.lineEditFilePath.setText(file_path)
-        else:
-            toast = Toast("No file selected.", duration=3000, parent=self)
-            toast.show_above(self)
+        if self.ui.checkFolderMode.isChecked():  # Folder mode
+            folder_path = QFileDialog.getExistingDirectory(self, "Select Folder", "")
+            if folder_path:
+                self.ui.lineEditFilePath.setText(folder_path)
+            else:
+                toast = Toast("No folder selected.", duration=3000, parent=self)
+                toast.show_above(self)
+        else:  # File mode
+            file_path, _ = QFileDialog.getOpenFileName(self, "Select File", "", "All Files (*)")
+            if file_path:
+                self.ui.lineEditFilePath.setText(file_path)
+            else:
+                toast = Toast("No file selected.", duration=3000, parent=self)
+                toast.show_above(self)
+
+
 
     def get_file_path(self):
         return self.ui.lineEditFilePath.text().strip()
@@ -304,6 +317,9 @@ class MainWindow(QMainWindow):
     
     def handle_upload_button(self):
         file_path = os.path.basename(self.get_file_path())
+        if self.ui.checkFolderMode.isChecked():
+            self.handle_upload_folder()
+            return
         if not file_path:
             toast = Toast("Please select a file to upload", duration=3000, parent=self)
             toast.show_above(self)
@@ -343,8 +359,31 @@ class MainWindow(QMainWindow):
             self.load_database_info()  # Refresh DB info after upload
 
         except Exception as e:
-            QMessageBox.critical(self, "Upload Error", f"Failed to upload file:\n{e}")
+            toast = Toast("Failed to upload file:\n" + e, duration=3000, parent=self)
+            toast.show_above(self)
     
+    def handle_upload_folder(self):
+        folder_path = self.get_file_path()
+        if not folder_path:
+            toast = Toast("Please select a folder to upload", duration=3000, parent=self)
+            toast.show_above(self)
+            return
+
+        try:
+            # TODO: Parse all files in the folder (CSV, JSON, etc.)
+
+            now = datetime.now()
+            folderName = os.path.basename(folder_path)  # Extract folder name from path
+            id_applicant = self.get_id_applicant()
+            if not id_applicant:
+                return
+            self.ui.lineEditFilePath.clear()  # Clear file path input
+            self.ui.inputIDApplicants.clear()  # Clear ID input
+            print(f"[UPLOAD] File {folderName} uploaded successfully at {now}.")  # DEBUG
+        except Exception as e:
+            toast = Toast("Failed to upload folder:\n" + e, duration=3000, parent=self)
+            toast.show_above(self)
+
     def handle_action_upload_cvs(self):
         self.handle_browse_button()  # Trigger browse
         if self.get_file_path():
