@@ -236,6 +236,7 @@ def add_folder(path_to_folder:str, uploaded_cvs:list[dict]) -> bool:
         
         # TODO: Implement the logic to add all files in the folder to the database
 
+        insert_folder_pdfs_to_mysql(path_to_folder)
         print(f"All files in folder {path_to_folder} added to the database.")
         # Update Frontend
         for file in os.listdir(path_to_folder):
@@ -259,7 +260,7 @@ def clear_database() -> bool:
     """
     try:
         # TODO: Implement the logic to clear the database
-
+        reset_tables()
         return True
     except Exception as e:
         print(f"Error clearing database: {e}")
@@ -273,7 +274,7 @@ def load_database() -> bool:
     """
     try:
         # TODO: Implement the logic to load the database
-
+        create_tables_if_not_exist()
         print("Database loaded successfully.")
         return True
     except Exception as e:

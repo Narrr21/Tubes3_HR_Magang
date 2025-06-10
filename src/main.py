@@ -103,6 +103,7 @@ class SummaryWindow(QDialog):
         self.ui = Ui_SummaryWindow()
         self.ui.setupUi(self)
 
+        self.id = id
         nama, email, phone, address, skills, experience, education, summary = get_summary_data(id)
         
         self.set_summary_data(summary)
@@ -118,7 +119,7 @@ class SummaryWindow(QDialog):
         Handle the action to view the full CV.
         Opens a new CV viewer window.
         """
-        file_path = get_file_path(id)
+        file_path = get_file_path(self.id)
 
         cv_window = CVWindow(file_path, self)
         cv_window.show()
@@ -165,6 +166,7 @@ class SummaryWindow(QDialog):
         Set the skills to be displayed in the summary.
         :param skills: List of skills (strings) to be displayed.
         """
+        print(f"[Skills] : {skills}\n")  # DEBUG
         model = QStringListModel()
         if skills:
             model.setStringList(skills)
@@ -178,6 +180,9 @@ class SummaryWindow(QDialog):
         Set the work experience to be displayed in the summary.
         :param experience: List of work experience (strings) to be displayed.
         """
+        print(f"[Experience] : {experience}\n")  # DEBUG
+        # experience = ["Company Name August 2006 to May 2017 Reading Teacher City , State Reading Endorsed Helped students develop and improve study methods and habits. Used a variety of teaching methods such as lectures, discussions and demonstrations. Improved 97% reading scores to satisfy graduation requirements Met with parents and guardians to discuss students' progress at least once per semester. Established positive relationships with students, parents, colleagues and administrators. Encouraged discussion of class material to promote critical thinking and academic success Implemented remedial programs for students requiring extra help Participated in regular professional development training to keep up-to-date with new teaching. Company Name August 2013 to June 2016 Sunshine Social Chairperson City , State Collected faculty and staff dues Planned and organized all school events, i.e. Parent Conference Night meals, Birthdays, Retirement Celebration, End of the year luncheon Morale Booster Company Name August 2010 to September 2012 On-Site Professional Developer City , State Led 110 students to improve test scores by more than 37% during the first semester of the 2015-2016 academic year. Offered specific training programs to help teachers maintain and improve in classroom management and student success Used a variety of teaching methods such as lectures, discussions and demonstrations to promote student success Provided onsite training for teachers and staff Planned and executed book studies and faculty trainings Company Name August 2006 to June 2009 Girls JV Basketball Coach City , State Motivated and encouraged student athletes to do their best during practices and games ' Met with prospective student-athletes to discuss their experience and goals Created and ran up-to-date and relevant drills Monitored the academic performance of student-athletes in addition to their athletic progress Helped develop each participant's physical and psychological fitness Maintained and updated attendance forms and insurance records Company Name July 2002 to May 2006 VE Teacher City , State Employed a variety of assessment tools and strategies to improve instruction in the classroom Attended a variety of professional development workshops centered on learning goals, classroom management, student motivation and engaging learning activities. Served on various committees and projects including Sunshine Committee as the on-site Chairperson Facilitated activities that developed students' physical, emotional and social growth. Encouraged students to be understanding with others. Used the positive reinforcement method to redirect poor behavior. Conducted small group and individual classroom activities with students based on differentiated learning needs. Worked with an average of 20 students per class. Participated in ongoing staff training sessions. Company Name August 2002 to May 2006 Sunshine Social Chairperson City , State Collected faculty and staff dues Planned and organized all school events, i.e. Parent Conference Night meals, Birthdays, Retirement Celebration, End of the year luncheon Morale Booster Company Name August 2002 to May 2006 Girls Basketball Coach City , State Motivated and encouraged student athletes to do their best during practices and games Met with prospective student-athletes to discuss their experience and goals Created and ran up-to-date and relevant drills Monitored the academic performance of student-athletes in addition to their athletic progress Helped develop each participant's physical and psychological fitness Maintained and updated attendance forms and insurance records"]
+        experience = ["Company Name August 2006 to May 2017 Reading Teacher City"]
         model = QStringListModel()
         if experience:
             model.setStringList(experience)
@@ -191,6 +196,7 @@ class SummaryWindow(QDialog):
         Set the education details to be displayed in the summary.
         :param education: List of education (strings) to be displayed.
         """
+        print(f"[Education] : {education}\n")  # DEBUG
         model = QStringListModel()
         if education:
             model.setStringList(education)
@@ -227,6 +233,7 @@ class MainWindow(QMainWindow):
         self.uploaded_cvs = []
 
         # Load initial DB info
+        clear_database()
         self.load_database_info()
 
     ## <-----------DATABASE HANDLING----------------------------------------------------------------------------------->
@@ -327,6 +334,7 @@ class MainWindow(QMainWindow):
 
     
     def handle_upload_button(self):
+        clear_database()
         file_path = os.path.basename(self.get_file_path())
         if self.ui.checkFolderMode.isChecked():
             self.handle_upload_folder()
@@ -407,6 +415,7 @@ class MainWindow(QMainWindow):
             toast.show_above(self)
 
     def handle_action_upload_cvs(self):
+        clear_database()
         self.handle_browse_button()  # Trigger browse
         if self.get_file_path():
             self.handle_upload_button()  # Trigger upload
@@ -524,6 +533,7 @@ class MainWindow(QMainWindow):
         return None
 
 if __name__ == "__main__":
+    
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()

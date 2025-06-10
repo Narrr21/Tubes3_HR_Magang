@@ -1,12 +1,12 @@
 import random
 from typing import List
-import mysql.connector
 import fitz 
 import re
 import os
 from faker import Faker
-from dotenv import load_dotenv
 import os
+
+import mysql.connector.connection
 
 class SummaryData():
     def __init__(self, nama: str, email: str, phone: str, address: str, skills: List[str], experience: List[str], education: List[str], summary: str):
@@ -129,30 +129,25 @@ def extract_summary_data_from_pdf(file_path: str) -> SummaryData:
 #         database="tubes3stima_db"
 #     )
 
-load_dotenv()
-DB_HOST = os.getenv("DB_HOST")
-DB_USER = os.getenv("DB_USER")
-DB_PASS = os.getenv("DB_PASS")
-DB_NAME = os.getenv("DB_NAME")
 
 def get_connection():
     temp_conn = mysql.connector.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASS,
-        database=DB_NAME
+        host="localhost",
+        user="root",
+        password="",
+        database="tubes3stima_db"
     )
     temp_cursor = temp_conn.cursor()
-    temp_cursor.execute("CREATE DATABASE IF NOT EXISTS {DB_NAME}")
+    temp_cursor.execute("CREATE DATABASE IF NOT EXISTS tubes3stima_db")
     temp_conn.commit()
     temp_cursor.close()
     temp_conn.close()
 
     return mysql.connector.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASS,
-        database=DB_NAME
+        host="localhost",
+        user="root",
+        password="",
+        database="tubes3stima_db"
     )
 
 def reset_tables():
@@ -262,12 +257,12 @@ def load_search_data_from_sql() -> list:
     ''')
     result = []
     for row in cursor.fetchall():
-        id, name, cv_path = row
+        app_id, name, cv_path = row
         try:
             text = extract_text_from_pdf(cv_path)
         except Exception:
             text = ''
-        result.append(SearchData(id=id, name=name, text=text))
+        result.append(SearchData(id=app_id, name=name, text=text))
     cursor.close()
     conn.close()
     return result
@@ -297,7 +292,9 @@ def get_summary_by_id(applicant_id: int):
     cv_path = get_cv_path_by_id(applicant_id)
     if not cv_path:
         return None
-    return extract_summary_data_from_pdf(cv_path)
+    data = extract_summary_data_from_pdf(cv_path)
+
+    return data.nama, data.email, data.phone, data.address, data.skills, data.experience, data.education, data.summary
 
 def seed_applicant_profile(n: int = None):
     """
