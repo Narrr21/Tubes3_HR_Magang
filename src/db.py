@@ -6,7 +6,8 @@ import os
 from faker import Faker
 import os
 
-import mysql.connector.connection
+import mysql.connector
+import dotenv
 
 class SummaryData():
     def __init__(self, nama: str, email: str, phone: str, address: str, skills: List[str], experience: List[str], education: List[str], summary: str):
@@ -97,6 +98,7 @@ def extract_detailed_info(text):
     else:
         education = 'No education listed'
 
+
     return SummaryData(
         nama=None, # ini seeding ????
         email=None,  # ini seeding ????
@@ -129,25 +131,36 @@ def extract_summary_data_from_pdf(file_path: str) -> SummaryData:
 #         database="tubes3stima_db"
 #     )
 
+dotenv.load_dotenv()  # Load environment variables from .env file
+DB_HOST = os.getenv("DB_HOST") 
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD") 
+DB_NAME = os.getenv("DB_NAME")
 
 def get_connection():
     temp_conn = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="tubes3stima_db"
+        # host="localhost",
+        # user="root",
+        # password="",
+        host= DB_HOST,
+        user = DB_USER,
+        password = DB_PASSWORD,
     )
     temp_cursor = temp_conn.cursor()
-    temp_cursor.execute("CREATE DATABASE IF NOT EXISTS tubes3stima_db")
+    temp_cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
     temp_conn.commit()
     temp_cursor.close()
     temp_conn.close()
 
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="tubes3stima_db"
+        # host="localhost",
+        # user="root",
+        # password="",
+        # database="tubes3stima_db"
+        host= DB_HOST,
+        user = DB_USER,
+        password = DB_PASSWORD,
+        database=DB_NAME
     )
 
 def reset_tables():
@@ -184,7 +197,8 @@ def create_tables_if_not_exist():
             last_name VARCHAR(50) DEFAULT NULL,
             date_of_birth DATE DEFAULT NULL,
             address VARCHAR(255) DEFAULT NULL,
-            phone_number VARCHAR(20) DEFAULT NULL
+            phone_number VARCHAR(20) DEFAULT NULL,
+            email VARCHAR(50) DEFAULT NULL
         )
     ''')
     cursor.execute('''
@@ -217,14 +231,14 @@ def insert_folder_pdfs_to_mysql(folder_path: str, application_role: str = None):
             address = fake.address().replace('\n', ', ')
             phone_number = '628' + ''.join(random.choices('0123456789', k=10))
             date_of_birth = fake.date_of_birth(minimum_age=18, maximum_age=60)
-
+            email = f"{last_name.lower()}.{first_name}@StimeHehe.com"
             # Step 2: Insert ke ApplicantProfile
             cursor.execute(
                 """
-                INSERT INTO ApplicantProfile (first_name, last_name, date_of_birth, address, phone_number)
-                VALUES (%s, %s, %s, %s, %s)
+                INSERT INTO ApplicantProfile (first_name, last_name, date_of_birth, address, phone_number, email)
+                VALUES (%s, %s, %s, %s, %s, %s)
                 """,
-                (first_name, last_name, date_of_birth, address, phone_number)
+                (first_name, last_name, date_of_birth, address, phone_number, email)
             )
             applicant_id = cursor.lastrowid  # Dapatkan ID hasil insert barusan
 
@@ -294,6 +308,23 @@ def get_summary_by_id(applicant_id: int):
         return None
     data = extract_summary_data_from_pdf(cv_path)
 
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT email FROM ApplicantProfile WHERE applicant_id = %s', (applicant_id,))
+    row = cursor.fetchone()
+    data.email = row[0] if row else None
+
+    cursor.execute('SELECT phone_number FROM ApplicantProfile WHERE applicant_id = %s', (applicant_id,))
+    row = cursor.fetchone()
+    data.phone = row[0] if row else None
+
+    cursor.execute('SELECT address FROM ApplicantProfile WHERE applicant_id = %s', (applicant_id,))
+    row = cursor.fetchone()
+    data.address = row[0] if row else None
+
+    cursor.close()
+    conn.close()
+
     return data.nama, data.email, data.phone, data.address, data.skills, data.experience, data.education, data.summary
 
 def seed_applicant_profile(n: int = None):
@@ -314,15 +345,16 @@ def seed_applicant_profile(n: int = None):
         last_name = fake.last_name()
         address = fake.address().replace('\n', ', ')
         phone_number = ''.join(random.choices('0123456789', k=random.randint(8, 15)))
-        print("phone number", phone_number)
+        email = f"{last_name}{first_name}{random.randint(1,999)}@stimehehe.com"
+
         # Tanggal lahir random (opsional, jika ingin diisi)
         date_of_birth = fake.date_of_birth(minimum_age=18, maximum_age=60)
         cursor.execute(
             """
-            INSERT INTO ApplicantProfile (first_name, last_name, date_of_birth, address, phone_number)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO ApplicantProfile (first_name, last_name, date_of_birth, address, phone_number, email)
+            VALUES (%s, %s, %s, %s, %s, %s)
             """,
-            (first_name, last_name, date_of_birth, address, phone_number)
+            (first_name, last_name, date_of_birth, address, phone_number, email)
         )
     conn.commit()
     cursor.close()
