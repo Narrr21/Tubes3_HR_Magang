@@ -16,7 +16,7 @@
 
 ## IF do any pip install
 
-1. in root dir, enter : pip freeze > requirement.txt
+1. in root dir, enter : pip freeze > requirements.txt
 
 ## DATABASE
 
