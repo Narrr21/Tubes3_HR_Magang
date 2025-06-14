@@ -44,9 +44,8 @@ class CVWindow(QDialog):
             return
 
         self.doc = fitz.open(file_path)
-        self.zoom_factor = 1.0  # Start with 100%
+        self.zoom_factor = 1.0
 
-        # Scroll Area setup
         self.scroll = QScrollArea(self)
         self.container = QWidget()
         self.layout = QVBoxLayout(self.container)
@@ -58,14 +57,13 @@ class CVWindow(QDialog):
             label = QLabel()
             pixmap = QPixmap.fromImage(image)
             label.setPixmap(pixmap)
-            label.original_pixmap = pixmap  # Save original pixmap for scaling
+            label.original_pixmap = pixmap
             self.layout.addWidget(label)
             self.labels.append(label)
 
         self.scroll.setWidget(self.container)
         self.scroll.setWidgetResizable(True)
 
-        # Zoom buttons
         zoom_in_btn = QPushButton("Zoom In +")
         zoom_out_btn = QPushButton("Zoom Out -")
 
@@ -114,10 +112,6 @@ class SummaryWindow(QDialog):
         self.ui.btnViewFullCV.clicked.connect(self.handle_view_cv)
     
     def handle_view_cv(self):
-        """
-        Handle the action to view the full CV.
-        Opens a new CV viewer window.
-        """
         file_path = get_file_path(id)
 
         cv_window = CVWindow(file_path, self)
@@ -126,27 +120,13 @@ class SummaryWindow(QDialog):
 
     
     def set_summary_data(self, summary_data):
-        """
-        Set the summary data to be displayed in the summary window.
-        :param data: Long string containing the summary information.
-        """
         self.ui.textSummary.setText(summary_data)
     
     def set_name(self, name):
-        """
-        Set the name of the CV or result being summarized.
-        :param name: Name of the CV or result.
-        """
         self.setWindowTitle(f"Summary for {name}")
         self.ui.lblApplicantName.setText(name)
     
     def set_personal_info(self, email = None, phone = None, address = None):
-        """
-        Set personal information to be displayed in the summary.
-        :param email: Email address of the applicant.
-        :param phone: Phone number of the applicant.
-        :param address: Address of the applicant.
-        """
         if email:
             self.ui.lblEmail.setText("Email: " + email)
         else:
@@ -161,10 +141,6 @@ class SummaryWindow(QDialog):
             self.ui.lblAddress.setText("Address: -")
         
     def set_skills(self, skills):
-        """
-        Set the skills to be displayed in the summary.
-        :param skills: List of skills (strings) to be displayed.
-        """
         print(f"[Skills] : {skills}\n")
         self.ui.listSkill.clear()
         self.ui.listSkill.setItemDelegate(Wrapper(self.ui.listSkill))  # Pass parent to delegate
@@ -179,11 +155,6 @@ class SummaryWindow(QDialog):
             self.ui.listSkill.addItem("No skills listed")
 
     def set_experience(self, experience):
-        """
-        Set the work experience to be displayed in the summary.
-        :param experience: List of work experience (strings) to be displayed.
-        """
-        # experience = ["tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt", "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"]
         print(f"[Experience] : {experience}\n") # DEBUG
 
         self.ui.listExperience.clear() 
@@ -202,10 +173,6 @@ class SummaryWindow(QDialog):
             self.ui.listExperience.addItem("No work experience listed")
 
     def set_education(self, education):
-        """
-        Set the education history to be displayed in the summary.
-        :param education: List of education history (strings) to be displayed.
-        """
         print(f"[Education] : {education}\n")
         self.ui.listEducation.clear()
         self.ui.listEducation.setItemDelegate(Wrapper(self.ui.listEducation))  # Pass parent to delegate
@@ -243,7 +210,6 @@ class MainWindow(QMainWindow):
         self.ui.btnViewSummary.setEnabled(False)
         self.ui.btnViewCV.setEnabled(False)
 
-        # Simulated in-memory "database" of uploaded CVs
         self.uploaded_cvs = []
 
         # Load initial DB info
@@ -251,10 +217,7 @@ class MainWindow(QMainWindow):
 
     ## <-----------DATABASE HANDLING----------------------------------------------------------------------------------->
     def clear_database(self):
-        """
-        Clears the in-memory uploaded_cvs list and updates the UI.
-        """
-        response = clear_database()  # Call to clear the database in the backend
+        response = clear_database()
         if not response:
             toast = Toast("Failed to clear database", duration=3000, parent=self)
             toast.show_above(self)
@@ -266,13 +229,9 @@ class MainWindow(QMainWindow):
         self.ui.lblTotalCVs.setText("Total CVs: 0")
         self.ui.lblLastUpload.setText("Last Upload: N/A")
         self.ui.listRecentCVs.clear()
-        self.load_database_info()  # Refresh UI after clearing
+        self.load_database_info()
 
     def load_database_info(self):
-        """
-        Loads the database info from the in-memory uploaded_cvs list.
-        Updates UI labels and recent uploads list.
-        """
         response = load_database()
         if not response:
             toast = Toast("Failed to load database info", duration=3000, parent=self)
@@ -289,11 +248,9 @@ class MainWindow(QMainWindow):
             for cv in sorted(self.uploaded_cvs, key=lambda x: x["upload_time"], reverse=True)[:5]
         ]
 
-        # Update UI labels
         self.ui.lblTotalCVs.setText(f"Total CVs: {total_cvs}")
         self.ui.lblLastUpload.setText(f"Last Upload: {last_upload}")
 
-        # Clear and update recent CV list widget
         self.ui.listRecentCVs.clear()
         if recent_uploads:
             for item in recent_uploads:
@@ -303,14 +260,14 @@ class MainWindow(QMainWindow):
 
     ## <----------------UPLOAD HANDLERS-------------------------------------------------------------------------------->
     def handle_browse_button(self):
-        if self.ui.checkFolderMode.isChecked():  # Folder mode
+        if self.ui.checkFolderMode.isChecked():
             folder_path = QFileDialog.getExistingDirectory(self, "Select Folder", "")
             if folder_path:
                 self.ui.lineEditFilePath.setText(folder_path)
             else:
                 toast = Toast("No folder selected.", duration=3000, parent=self)
                 toast.show_above(self)
-        else:  # File mode
+        else:
             file_path, _ = QFileDialog.getOpenFileName(self, "Select File", "", "All Files (*)")
             if file_path:
                 self.ui.lineEditFilePath.setText(file_path)
@@ -325,7 +282,7 @@ class MainWindow(QMainWindow):
     
     def fade_border(self, widget=None):
         steps = 10
-        interval = 200  # ms
+        interval = 200
         for i in range(steps):
             opacity = 1 - i / steps
             red_value = int(255 * opacity)
@@ -341,7 +298,6 @@ class MainWindow(QMainWindow):
             toast.show_above(self)
             return None
         else:
-            # Valid input
             self.ui.inputIDApplicants.setStyleSheet("")
             return text
 
@@ -358,22 +314,19 @@ class MainWindow(QMainWindow):
             return
 
         try:
-            # Simulate adding this file to "database"
             now = datetime.now()
-            filename = file_path.split("/")[-1]  # Extract filename from path
-            id_applicant = self.get_id_applicant()  # Placeholder for ID applicant retrieval logic
+            filename = file_path.split("/")[-1]
+            id_applicant = self.get_id_applicant()
 
             # TODO: Validate id_applicant before proceeding
+            if not id_applicant:
+                return
             
             if not filename.lower().endswith('.pdf'):
                 toast = Toast("Only PDF files are allowed", duration=3000, parent=self)
                 toast.show_above(self)
                 self.fade_border(self.ui.lineEditFilePath)
-                self.ui.lineEditFilePath.clear()  # Clear file path input
-                self.ui.inputIDApplicants.clear()  # Clear ID input
-                return
-            
-            if not id_applicant:
+                self.ui.lineEditFilePath.clear()
                 return
             
             response = add_file(self.get_file_path(), id_applicant)
@@ -392,10 +345,10 @@ class MainWindow(QMainWindow):
                 "upload_time": now
             })
 
-            self.ui.lineEditFilePath.clear()  # Clear file path input
-            self.ui.inputIDApplicants.clear()  # Clear ID input
+            self.ui.lineEditFilePath.clear()
+            self.ui.inputIDApplicants.clear()
             print(f"[UPLOAD] File {filename} uploaded successfully at {now}.")  # DEBUG
-            self.load_database_info()  # Refresh DB info after upload
+            self.load_database_info()
 
         except Exception as e:
             toast = Toast("Failed to upload file:\n" + str(e), duration=3000, parent=self)
@@ -410,7 +363,7 @@ class MainWindow(QMainWindow):
             return
 
         try:
-            folderName = os.path.basename(folder_path)  # Extract folder name from path
+            folderName = os.path.basename(folder_path)
             response = add_folder(folder_path, self.uploaded_cvs)
 
             if response:
@@ -420,16 +373,16 @@ class MainWindow(QMainWindow):
                 toast = Toast("Failed to upload file", duration=3000, parent=self)
                 toast.show_above(self)
                 return
-            self.ui.lineEditFilePath.clear()  # Clear file path input
-            print(f"[UPLOAD] Folder {folderName} uploaded successfully.")  # DEBUG
+            self.ui.lineEditFilePath.clear()
+            print(f"[UPLOAD] Folder {folderName} uploaded successfully.")
         except Exception as e:
             toast = Toast("Failed to upload folder:\n" + str(e), duration=3000, parent=self)
             toast.show_above(self)
 
     def handle_action_upload_cvs(self):
-        self.handle_browse_button()  # Trigger browse
+        self.handle_browse_button()
         if self.get_file_path():
-            self.handle_upload_button()  # Trigger upload
+            self.handle_upload_button()
     
     ## <----------------SEARCH HANDLERS-------------------------------------------------------------------------------->
     def get_selected_algorithm(self):
@@ -448,7 +401,7 @@ class MainWindow(QMainWindow):
         raw_text = self.ui.inputKeywords.text()
         words = re.split(r'[,\s]+', raw_text.strip())
         keywords = [word for word in words if word]
-        print(f"[KEYWORDS] Parsed keywords: {keywords}")  # DEBUG
+        print(f"[KEYWORDS] Parsed keywords: {keywords}")
 
         if keywords:
             return keywords
@@ -484,12 +437,12 @@ class MainWindow(QMainWindow):
             self.ui.listResults.addItem(item)
 
         if exact_time != None:
-            self.ui.lblExactMatchTime.setText("🎯 Exact Match : " + str(exact_time) + " ms")  # placeholder
+            self.ui.lblExactMatchTime.setText("🎯 Exact Match : " + str(exact_time) + " ms")
         else:
             self.ui.lblExactMatchTime.setText("🎯 Exact Match : -ms")
 
         if fuzzy_time != None:
-            self.ui.lblFuzzyMatchTime.setText("🔍 Fuzzy Match : " + str(fuzzy_time) + " ms")  # placeholder
+            self.ui.lblFuzzyMatchTime.setText("🔍 Fuzzy Match : " + str(fuzzy_time) + " ms")
         else:
             self.ui.lblFuzzyMatchTime.setText("🔍 Fuzzy Match : -ms")
         
