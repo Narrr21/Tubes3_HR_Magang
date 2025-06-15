@@ -24,15 +24,17 @@ from ui.summary import Ui_SummaryWindow  # Assuming you have a separate summary 
 # from db import get_connection  # Uncomment and implement when ready
 from ui.toast import Toast  # Assuming you have a Toast class for notifications
 from ui.wrapper import Wrapper  # Assuming you have a custom item delegate for list widgets
-from interface import (
-    get_summary_data,       # get summary data from database by id
-    get_file_path,          # get file path of CV from database by id
-    run_search_algorithm,   # run search algorithm on keywords
-    add_file,               # add file to database
-    add_folder,             # add files in folder to database
-    clear_database,          # clear database
-    load_database          # load database info
-)
+# from interface import (
+#     get_summary_data,       # get summary data from database by id
+#     get_file_path,          # get file path of CV from database by id
+#     run_search_algorithm,   # run search algorithm on keywords
+#     add_file,               # add file to database
+#     add_folder,             # add files in folder to database
+#     clear_database,         # clear database
+#     load_database,          # load database info
+#     seed_database,          # seed database with initial data
+# )
+from interface import *
 
 class CVWindow(QDialog):
     def __init__(self, file_path, parent=None):
@@ -101,6 +103,7 @@ class SummaryWindow(QDialog):
         self.ui = Ui_SummaryWindow()
         self.ui.setupUi(self)
 
+        self.id = id
         nama, email, phone, address, skills, experience, education, summary = get_summary_data(id)
         
         self.set_summary_data(summary)
@@ -112,7 +115,7 @@ class SummaryWindow(QDialog):
         self.ui.btnViewFullCV.clicked.connect(self.handle_view_cv)
     
     def handle_view_cv(self):
-        file_path = get_file_path(id)
+        file_path = get_file_path(self.id)
 
         cv_window = CVWindow(file_path, self)
         cv_window.show()
@@ -211,6 +214,10 @@ class MainWindow(QMainWindow):
         self.ui.btnViewCV.setEnabled(False)
 
         self.uploaded_cvs = []
+        clear_database()
+        conn = get_connection()  # Initialize database connection
+        seed_database()
+        conn.close()
 
         # Load initial DB info
         self.load_database_info()
@@ -232,13 +239,13 @@ class MainWindow(QMainWindow):
         self.load_database_info()
 
     def load_database_info(self):
-        response = load_database()
+        response, count = load_database()
         if not response:
             toast = Toast("Failed to load database info", duration=3000, parent=self)
             toast.show_above(self)
             return
 
-        total_cvs = len(self.uploaded_cvs)
+        total_cvs = count
         last_upload = (
             max(self.uploaded_cvs, key=lambda x: x["upload_time"])["upload_time"].strftime("%Y-%m-%d %H:%M:%S")
             if self.uploaded_cvs else "N/A"
@@ -292,7 +299,7 @@ class MainWindow(QMainWindow):
         QTimer.singleShot(steps * interval, lambda: widget.setStyleSheet(""))
 
     
-    def handle_upload_button(self):
+    def handle_upload_button(self):        
         file_path = os.path.basename(self.get_file_path())
         if self.ui.checkFolderMode.isChecked():
             self.handle_upload_folder()
@@ -382,7 +389,7 @@ class MainWindow(QMainWindow):
         elif self.ui.radioBoyerMoore.isChecked():
             return "BM"
         elif self.ui.radioAhoCorasick.isChecked():
-            return "Aho-Corasick"
+            return "AhoCorasick"
         return None
 
     def get_result_limit(self):
@@ -413,7 +420,8 @@ class MainWindow(QMainWindow):
             toast = Toast("Please enter keyword to search", duration=3000, parent=self)
             toast.show_above(self)
             return
-
+        toast = Toast("Searching...", duration=3000, parent=self)
+        toast.show_above(self)
         results, exact_time, fuzzy_time = run_search_algorithm(algorithm, keywords, limit)
 
         self.ui.listResults.clear()
@@ -449,6 +457,8 @@ class MainWindow(QMainWindow):
         
         self.ui.btnViewSummary.setEnabled(len(results) > 0)
         self.ui.btnViewCV.setEnabled(len(results) > 0)
+        toast = Toast("Searching Done!!", duration=3000, parent=self)
+        toast.show_above(self)
 
     def handle_clear_button(self):
         self.ui.inputKeywords.clear()
@@ -459,7 +469,7 @@ class MainWindow(QMainWindow):
 
         self.ui.btnViewSummary.setEnabled(False)
         self.ui.btnViewCV.setEnabled(False)
-    
+
     ## <----------------RESULT HANDLERS-------------------------------------------------------------------------------->
     def handle_view_summary(self):
         selected = self.get_selected_result()
@@ -493,6 +503,7 @@ class MainWindow(QMainWindow):
         return None
 
 if __name__ == "__main__":
+    
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()

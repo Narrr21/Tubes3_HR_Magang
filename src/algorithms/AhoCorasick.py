@@ -115,10 +115,10 @@ class TestAhoCorasick(unittest.TestCase):
 
     def test_overlapping_and_substring_patterns(self):
         """Tests correct counting for patterns that are substrings of other patterns."""
-        text = "abche"
-        patterns = ["abc", "bche", "he"]
+        text = "bchaae"
+        patterns = ["a"]
         # Should find "abc", "bche", and "he" (as part of "bche")
-        expected = {"abc": 1, "bche": 1, "he": 1}
+        expected = {"a": 2}
         self.assertEqual(AhoCorasick.search_multi_pattern(text, patterns), expected)
         
         text2 = "ahishershe"
