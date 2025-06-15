@@ -455,7 +455,6 @@ class Ui_MainWindow(object):
         self.lineEditFilePath.setPlaceholderText(_translate("MainWindow", "📄 Select PDF file to upload..."))
         self.btnBrowse.setText(_translate("MainWindow", "📂 Browse"))
         self.btnUpload.setText(_translate("MainWindow", "⬆️ Upload"))
-        self.inputIDApplicants.setPlaceholderText(_translate("MainWindow", "Enter ID Applicants"))
         self.checkFolderMode.setText(_translate("MainWindow", "Folder"))
         self.groupSearch.setTitle(_translate("MainWindow", "🔍 Search Configuration"))
         self.lblKeywords.setText(_translate("MainWindow", "🏷️ Keywords:"))
