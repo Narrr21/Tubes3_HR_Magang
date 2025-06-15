@@ -401,7 +401,7 @@ class MainWindow(QMainWindow):
         elif self.ui.radioBoyerMoore.isChecked():
             return "BM"
         elif self.ui.radioAhoCorasick.isChecked():
-            return "Aho-Corasick"
+            return "AhoCorasick"
         return None
 
     def get_result_limit(self):
@@ -444,7 +444,7 @@ class MainWindow(QMainWindow):
 
         for res in results:
             display_text = f"{res.name} (ID: {res.id})"
-            if res.keywords:
+            if len(res.keywords) > 0:
                 display_text += " - Keywords: " + ", ".join(f"{k} ({v})" for k, v in res.keywords.items())
             else:
                 display_text += " - No keywords found"
