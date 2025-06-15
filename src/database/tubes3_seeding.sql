@@ -123,4 +123,3 @@ INSERT INTO ApplicantProfilePlain (app_id, first_name, last_name, date_of_birth,
 (78, 'Ikhwan', 'ALHAKIM', '2004-04-09', 'Jl. Bengkuang No. 20, Sungai Penuh', '082198762341'),
 (79, 'IKHWAN', 'Alh4k1M', '2003-03-27', 'Jl. Nangka No. 14, Solok', '081277788899'),
 (80, '1KHw4N', '4LHAKIM', '2004-01-19', 'Jl. Mangga No. 60, Padang Panjang', '082166655544');
-

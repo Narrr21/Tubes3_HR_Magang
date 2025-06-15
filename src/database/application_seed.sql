@@ -1,6 +1,7 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS ApplicationDetail;
+DROP TABLE IF EXISTS ApplicantProfilePlain;
 
 SET FOREIGN_KEY_CHECKS = 1;
 

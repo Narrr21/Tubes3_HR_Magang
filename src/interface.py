@@ -190,12 +190,12 @@ def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) ->
                 res.keywords = Levenshtein.search_multi_pattern(data.text, keyword)
                 fuzzy_time += (time.time() - start_time) * 1000
         print("[DEBUG] fuzzy time : ===aopiawhfoiawh ", fuzzy_time)
-        if sum(res.keywords.values()) > 0:
-            results.append(res)
+        # if sum(res.keywords.values()) > 0:
+        results.append(res)
 
     
     # TODO: sorting results based on keyword occurences
-    results.sort(key=lambda x: sum(x.keywords.values()), reverse=True)
+    results.sort(key=lambda x: sum(x.keywords.values()))
 
     return results[:limit], round(exact_time, 6), round(fuzzy_time, 6)
     # Placeholder dummy results simulating keyword matches

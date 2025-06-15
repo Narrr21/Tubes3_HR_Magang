@@ -203,13 +203,15 @@ def insert_folder_pdfs_to_mysql(folder_path: str, application_role: str = None):
             print(f"Memproses file: {filename} ==================================")
             file_path = os.path.join(folder_path, filename)
 
-            # seeding
-            first_name = fake.first_name()
-            last_name = fake.last_name()
-            address = fake.address().replace('\n', ', ')
-            phone_number = '628' + ''.join(random.choices('0123456789', k=10))
-            date_of_birth = fake.date_of_birth(minimum_age=18, maximum_age=60)
+            spnkey = os.urandom(32)
+
+            first_name = ENC.encrypt_spn(fake.first_name(), spnkey)
+            last_name = ENC.encrypt_spn(fake.last_name(), spnkey)
+            address = ENC.encrypt_spn(fake.address().replace('\n', ', '), spnkey)
+            phone_number = ENC.encrypt_spn('628' + ''.join(random.choices('0123456789', k=10)), spnkey)
+            date_of_birth = ENC.encrypt_spn(fake.date_of_birth(minimum_age=18, maximum_age=60).strftime("%Y-%m-%d"), spnkey)
             email = f"{last_name.lower()}.{first_name}@StimeHehe.com"
+
             cursor.execute(
                 """
                 INSERT INTO ApplicantProfile (first_name, last_name, date_of_birth, address, phone_number)
@@ -217,7 +219,16 @@ def insert_folder_pdfs_to_mysql(folder_path: str, application_role: str = None):
                 """,
                 (first_name, last_name, date_of_birth, address, phone_number)
             )
-            applicant_id = cursor.lastrowid
+
+            applicant_id = cursor.lastrowid  # Dapatkan ID hasil insert barusan
+            (C1_x, C1_y), SPN_key = ENC.encrypt_ecc(spnkey)
+            cursor.execute(
+                """
+                INSERT INTO EncryptionParameters (applicant_id, C1_x, C1_y, SPN_key) 
+                VALUES (%s, %s, %s, %s)
+                """,
+                (applicant_id, C1_x.to_bytes(32, "big"), C1_y.to_bytes(32, "big"), SPN_key)
+            )
 
             cursor.execute(
                 """
@@ -238,7 +249,7 @@ def load_search_data_from_sql() -> list:
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT ap.applicant_id, ap.first_name, ap.last_name, ad.cv_path
+        SELECT DISTINCT ap.applicant_id, ap.first_name, ap.last_name, ad.cv_path
         FROM ApplicantProfile ap
         JOIN ApplicationDetail ad ON ap.applicant_id = ad.applicant_id
     ''')
@@ -289,18 +300,29 @@ def get_summary_by_id(applicant_id: int):
 
     conn = get_connection()
     cursor = conn.cursor()
+    data.email =  None
 
+    cursor.execute('''
+        SELECT enc.C1_x, enc.C1_y, enc.SPN_key
+        FROM EncryptionParameters enc WHERE enc.applicant_id = %s
+        ''', (applicant_id,))
+
+    enc_params = cursor.fetchall()
+    key = None
+    if enc_params:
+        key = ENC.decrypt_key_from_id(enc_params[0])
+    
     cursor.execute('SELECT first_name, last_name FROM ApplicantProfile WHERE applicant_id = %s', (applicant_id,))
     row = cursor.fetchone()
-    data.nama = f"{row[0]} {row[1]}" if row else None
+    data.nama = f"{ENC.decrypt_spn(row[0], key) if row else None} {ENC.decrypt_spn(row[1], key) if row else None}"
 
     cursor.execute('SELECT phone_number FROM ApplicantProfile WHERE applicant_id = %s', (applicant_id,))
     row = cursor.fetchone()
-    data.phone = row[0] if row else None
+    data.phone = ENC.decrypt_spn(row[0], key) if row else None
 
     cursor.execute('SELECT address FROM ApplicantProfile WHERE applicant_id = %s', (applicant_id,))
     row = cursor.fetchone()
-    data.address = row[0] if row else None
+    data.address = ENC.decrypt_spn(row[0], key) if row else None
 
     cursor.close()
     conn.close()
