@@ -351,7 +351,17 @@ def seed_applicant_profile(n: int = None):
     conn.close()
     print(f"Berhasil seeding {n} data ke ApplicantProfile.")
 
-
+def get_cv_count():
+    """
+    Menghitung jumlah CV yang ada di tabel ApplicationDetail.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM ApplicationDetail")
+    count = cursor.fetchone()[0]
+    cursor.close()
+    conn.close()
+    return count
 
 if __name__ == "__main__":
     """
