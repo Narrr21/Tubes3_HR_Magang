@@ -5,7 +5,8 @@ from algorithms.AhoCorasick import AhoCorasick
 from algorithms.Levenshtein import Levenshtein
 import time
 import os
-from db import *
+from database.db import *
+from database.seeder import *
 
 # DATA STRUCTURES
 class SummaryData():
@@ -261,6 +262,7 @@ def clear_database() -> bool:
     try:
         # TODO: Implement the logic to clear the database
         reset_tables()
+        seed_database()
         return True
     except Exception as e:
         print(f"Error clearing database: {e}")

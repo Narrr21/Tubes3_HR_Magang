@@ -350,6 +350,7 @@ class MainWindow(QMainWindow):
     
     def handle_upload_button(self):
         clear_database()
+        
         file_path = os.path.basename(self.get_file_path())
         if self.ui.checkFolderMode.isChecked():
             self.handle_upload_folder()
