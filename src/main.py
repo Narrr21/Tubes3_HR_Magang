@@ -298,17 +298,6 @@ class MainWindow(QMainWindow):
             QTimer.singleShot(i * interval, lambda s=style: widget.setStyleSheet(s))
         QTimer.singleShot(steps * interval, lambda: widget.setStyleSheet(""))
 
-    def get_id_applicant(self):
-        text = self.ui.inputIDApplicants.text().strip()
-        if not text.isdigit():
-            self.fade_border(self.ui.inputIDApplicants)
-            toast = Toast("Please enter a valid ID applicant", duration=3000, parent=self)
-            toast.show_above(self)
-            return None
-        else:
-            self.ui.inputIDApplicants.setStyleSheet("")
-            return text
-
     
     def handle_upload_button(self):        
         file_path = os.path.basename(self.get_file_path())
@@ -353,7 +342,6 @@ class MainWindow(QMainWindow):
             })
 
             self.ui.lineEditFilePath.clear()
-            self.ui.inputIDApplicants.clear()
             print(f"[UPLOAD] File {filename} uploaded successfully at {now}.")  # DEBUG
             toast = Toast("File uploaded successfully", duration=3000, parent=self)
             toast.show_above(self)
