@@ -209,12 +209,11 @@ def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) ->
     # ]
     # return results[:limit], 123, 456
 
-def add_file(path_to_file:str, id_applicant: int) -> bool:
+def add_file(path_to_file:str) -> bool:
     """
     Adds a file to the database.
     Args:
         path_to_file (str): The path to the file to be added.
-        id_applicant (int): The ID of the applicant to whom the file belongs.
     Returns:
         bool: True if the file was added successfully, False otherwise.
     """

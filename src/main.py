@@ -313,11 +313,6 @@ class MainWindow(QMainWindow):
         try:
             now = datetime.datetime.now()
             filename = file_path.split("/")[-1]
-            id_applicant = self.get_id_applicant()
-
-            # TODO: Validate id_applicant before proceeding
-            if not id_applicant:
-                return
             
             if not filename.lower().endswith('.pdf'):
                 toast = Toast("Only PDF files are allowed", duration=3000, parent=self)
@@ -326,7 +321,7 @@ class MainWindow(QMainWindow):
                 self.ui.lineEditFilePath.clear()
                 return
             
-            response = add_file(self.get_file_path(), id_applicant)
+            response = add_file(self.get_file_path())
 
             if response:
                 pass
@@ -335,7 +330,7 @@ class MainWindow(QMainWindow):
                 toast.show_above(self)
                 return
 
-            print(f"[UPLOAD] Uploading file: {filename} at {now} by id applicant {id_applicant}")  # DEBUG
+            print(f"[UPLOAD] Uploading file: {filename} at {now}")  # DEBUG
             self.uploaded_cvs.append({
                 "filename": filename,
                 "upload_time": now
