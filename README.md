@@ -1,6 +1,15 @@
 # **HR Magang: Sistem ATS Berbasis CV**
 
+## **Fitur Aplikasi**
+- Antarmuka pengguna yangn ditulis dengan PyQT
+- Upload file PDF CV
+- Mendukung 3 algoritma pencocokan yaitu Knuth-Morris-Pratt, Boyer-Moore, dan Aho-Corasick
+- Mendukung pencocokan secara *fuzzy matching* dengan perhitungan Levenshtein Distance
+- Penyimpanan data ke dalam database MySQL
+- Enkripsi data pribadi *applicant* menggunakan *Substitution-Permutation Network* dan *Elliptic Curve Cryptography*
+
 Sistem ini merupakan implementasi dari tiga algoritma pencocokan pola klasik untuk memproses dan menganalisis teks secara efisien. Proyek ini dikembangkan untuk memenuhi tugas dalam ranah _Human Resources_ (HR) yang melibatkan penyaringan dan analisis data tekstual.
+Demo aplikasi: [Youtube](https://youtu.be/KJO5aRVa1f8?si=_zvF52Mz_caCNj3_)
 
 ## **Penjelasan Singkat Algoritma**
 
