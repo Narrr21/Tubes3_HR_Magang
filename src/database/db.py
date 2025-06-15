@@ -66,33 +66,33 @@ def extract_detailed_info(text):
         skills = 'No skills available'
 
     # Experience
-    # experience_matches = list(re.finditer(r'(Experience|Work History)(.*?)(Education|Skills|$)', text, flags=re.DOTALL))
-    # if experience_matches:
-    #     experience = "\n".join([m.group(2).strip() for m in experience_matches if m.group(2).strip()])
-    # else:
-    #     experience = 'No experience listed'
+    experience_matches = list(re.finditer(r'(Experience|Work History)(.*?)(Education|Skills|$)', text, flags=re.DOTALL))
+    if experience_matches:
+        experience = "\n".join([m.group(2).strip() for m in experience_matches if m.group(2).strip()])
+    else:
+        experience = 'No experience listed'
 
-    experience_matches = re.search(r'(Experience|Work History)(.*?)(Education|Skills|Projects|$)', text, re.DOTALL)
-    exp_text = experience_matches.group(2).strip() if experience_matches else ''
-    pattern = re.compile(
-            r'(?P<position>.+?)\s*'                                
-            r'(?P<start_month>\w+)\s(?P<start_year>\d{4})\s*'         
-            r'to\s*'                              
-            r'(?P<end_month>\w+|Current)\s(?P<end_year>\d{4}|)\s*'    
-            r'(?P<company>.+)?',                
-            re.IGNORECASE
-        )
+    # experience_matches = re.search(r'(Experience|Work History)(.*?)(Education|Skills|Projects|$)', text, re.DOTALL)
+    # exp_text = experience_matches.group(2).strip() if experience_matches else ''
+    # pattern = re.compile(
+    #         r'(?P<position>.+?)\s*'                                
+    #         r'(?P<start_month>\w+)\s(?P<start_year>\d{4})\s*'         
+    #         r'to\s*'                              
+    #         r'(?P<end_month>\w+|Current)\s(?P<end_year>\d{4}|)\s*'    
+    #         r'(?P<company>.+)?',                
+    #         re.IGNORECASE
+    #     )
 
-    print(f"[DEBUG] Extracting experience from text: {exp_text}")
-    exp = []
-    for match in pattern.finditer(exp_text):
-        position = match.group("position").strip()
-        start = f"{match.group('start_month')} {match.group('start_year')}"
-        end = match.group("end_month")
-        if end != "Current":
-            end = f"{end} {match.group('end_year')}"
-        company = match.group("company").strip() if match.group("company") else "Unknown"
-        exp.append(f"{position} {start} to {end} {company}")
+    # print(f"[DEBUG] Extracting experience from text: {exp_text}")
+    # exp = []
+    # for match in pattern.finditer(exp_text):
+    #     position = match.group("position").strip()
+    #     start = f"{match.group('start_month')} {match.group('start_year')}"
+    #     end = match.group("end_month")
+    #     if end != "Current":
+    #         end = f"{end} {match.group('end_year')}"
+    #     company = match.group("company").strip() if match.group("company") else "Unknown"
+    #     exp.append(f"{position} {start} to {end} {company}")
     
 
     # Education
@@ -108,7 +108,7 @@ def extract_detailed_info(text):
         phone=None,
         address=None,
         skills=[s.strip() for s in skills.split('\n') if s.strip()],
-        experience=exp,
+        experience=[exp.strip() for exp in experience.split('\n') if exp.strip()],
         education=[e.strip() for e in education.split('\n') if e.strip()],
         summary=summary
     )
@@ -244,7 +244,6 @@ def load_search_data_from_sql() -> list:
     ''')
     result = []
     rows = cursor.fetchall()
-
    
     for row in rows:
         app_id, firstname, lastname, cv_path = row
@@ -269,7 +268,6 @@ def load_search_data_from_sql() -> list:
     conn.close()
     return result
 
-
 def get_cv_path_by_id(applicant_id: int) -> str:
     conn = get_connection()
     cursor = conn.cursor()
@@ -283,7 +281,6 @@ def get_cv_path_by_id(applicant_id: int) -> str:
     conn.close()
     return row[0] if row else None
 
-
 def get_summary_by_id(applicant_id: int):
     cv_path = get_cv_path_by_id(applicant_id)
     if not cv_path:
@@ -292,7 +289,10 @@ def get_summary_by_id(applicant_id: int):
 
     conn = get_connection()
     cursor = conn.cursor()
-    data.email =  None
+
+    cursor.execute('SELECT first_name, last_name FROM ApplicantProfile WHERE applicant_id = %s', (applicant_id,))
+    row = cursor.fetchone()
+    data.nama = f"{row[0]} {row[1]}" if row else None
 
     cursor.execute('SELECT phone_number FROM ApplicantProfile WHERE applicant_id = %s', (applicant_id,))
     row = cursor.fetchone()

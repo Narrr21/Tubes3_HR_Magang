@@ -400,7 +400,7 @@ class MainWindow(QMainWindow):
             return "KMP"
         elif self.ui.radioBoyerMoore.isChecked():
             return "BM"
-        elif self.ui.radiodCorasick.isChecked():
+        elif self.ui.radioAhoCorasick.isChecked():
             return "Aho-Corasick"
         return None
 
@@ -434,7 +434,7 @@ class MainWindow(QMainWindow):
             return
         toast = Toast("Searching...", duration=3000, parent=self)
         toast.show_above(self)
-        results, exact_time, fuzzy_time = run_searcah_algorithm(algorithm, keywords, limit)
+        results, exact_time, fuzzy_time = run_search_algorithm(algorithm, keywords, limit)
 
         self.ui.listResults.clear()
         if len(results) == 0:
