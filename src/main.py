@@ -237,6 +237,7 @@ class MainWindow(QMainWindow):
             toast = Toast("Failed to load database info", duration=3000, parent=self)
             toast.show_above(self)
             return
+
         total_cvs = len(self.uploaded_cvs)
         last_upload = (
             max(self.uploaded_cvs, key=lambda x: x["upload_time"])["upload_time"].strftime("%Y-%m-%d %H:%M:%S")
@@ -332,8 +333,7 @@ class MainWindow(QMainWindow):
             response = add_file(self.get_file_path(), id_applicant)
 
             if response:
-                toast = Toast("File uploaded successfully", duration=3000, parent=self)
-                toast.show_above(self)
+                pass
             else:
                 toast = Toast("Failed to upload file", duration=3000, parent=self)
                 toast.show_above(self)
@@ -348,6 +348,8 @@ class MainWindow(QMainWindow):
             self.ui.lineEditFilePath.clear()
             self.ui.inputIDApplicants.clear()
             print(f"[UPLOAD] File {filename} uploaded successfully at {now}.")  # DEBUG
+            toast = Toast("File uploaded successfully", duration=3000, parent=self)
+            toast.show_above(self)
             self.load_database_info()
 
         except Exception as e:
@@ -375,6 +377,7 @@ class MainWindow(QMainWindow):
                 return
             self.ui.lineEditFilePath.clear()
             print(f"[UPLOAD] Folder {folderName} uploaded successfully.")
+            self.load_database_info()
         except Exception as e:
             toast = Toast("Failed to upload folder:\n" + str(e), duration=3000, parent=self)
             toast.show_above(self)
