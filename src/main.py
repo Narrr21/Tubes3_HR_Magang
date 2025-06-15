@@ -426,6 +426,11 @@ class MainWindow(QMainWindow):
         results, exact_time, fuzzy_time = run_search_algorithm(algorithm, keywords, limit)
 
         self.ui.listResults.clear()
+        if len(results) == 0:
+            toast = Toast("No results found", duration=3000, parent=self)
+            toast.show_above(self)
+            self.ui.listResults.addItem("No results found")
+
         for res in results:
             display_text = f"{res.name} (ID: {res.id})"
             if res.keywords:
