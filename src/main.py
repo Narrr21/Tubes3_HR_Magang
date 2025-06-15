@@ -432,8 +432,9 @@ class MainWindow(QMainWindow):
             toast = Toast("Please enter keyword to search", duration=3000, parent=self)
             toast.show_above(self)
             return
-
-        results, exact_time, fuzzy_time = run_search_algorithm(algorithm, keywords, limit)
+        toast = Toast("Searching...", duration=3000, parent=self)
+        toast.show_above(self)
+        results, exact_time, fuzzy_time = run_searcah_algorithm(algorithm, keywords, limit)
 
         self.ui.listResults.clear()
         if len(results) == 0:
@@ -468,6 +469,8 @@ class MainWindow(QMainWindow):
         
         self.ui.btnViewSummary.setEnabled(len(results) > 0)
         self.ui.btnViewCV.setEnabled(len(results) > 0)
+        toast = Toast("Searching Done!!", duration=3000, parent=self)
+        toast.show_above(self)
 
     def handle_clear_button(self):
         self.ui.inputKeywords.clear()
@@ -478,7 +481,7 @@ class MainWindow(QMainWindow):
 
         self.ui.btnViewSummary.setEnabled(False)
         self.ui.btnViewCV.setEnabled(False)
-    
+
     ## <----------------RESULT HANDLERS-------------------------------------------------------------------------------->
     def handle_view_summary(self):
         selected = self.get_selected_result()

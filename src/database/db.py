@@ -102,10 +102,10 @@ def extract_detailed_info(text):
         education = 'No education listed'
 
     return SummaryData(
-        nama=None, # ini seeding ????
-        email=None,  # ini seeding ????
-        phone=None,  # ini seeding ????
-        address=None,  # ini seeding ????
+        nama=None,
+        email=None,
+        phone=None,
+        address=None,
         skills=[s.strip() for s in skills.split('\n') if s.strip()],
         experience=exp,
         education=[e.strip() for e in education.split('\n') if e.strip()],
@@ -113,11 +113,6 @@ def extract_detailed_info(text):
     )
 
 def extract_summary_data_from_pdf(file_path: str) -> SummaryData:
-    """
-    Mengekstrak data dari file PDF dan mengembalikannya dalam bentuk SummaryData.
-    :param file_path: Path ke file PDF
-    :return: SummaryData
-    """
     extracted_text = extract_text_from_pdf(file_path)
     if isinstance(extracted_text, list):
         extracted_text = "\n".join(extracted_text)
@@ -134,9 +129,6 @@ DB_NAME = os.getenv("DB_NAME")
 
 def get_connection():
     temp_conn = mysql.connector.connect(
-        # host="localhost",
-        # user="root",
-        # password="",
         host= DB_HOST,
         user = DB_USER,
         password = DB_PASSWORD,
@@ -148,10 +140,6 @@ def get_connection():
     temp_conn.close()
 
     return mysql.connector.connect(
-        # host="localhost",
-        # user="root",
-        # password="",
-        # database="tubes3stima_db"
         host= DB_HOST,
         user = DB_USER,
         password = DB_PASSWORD,
@@ -159,10 +147,6 @@ def get_connection():
     )
 
 def reset_tables():
-    """
-    Menghapus semua data dari tabel ApplicantProfile dan ApplicationDetail.
-    Perlu diurutkan karena ApplicationDetail bergantung pada ApplicantProfile (FK).
-    """
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -182,9 +166,6 @@ def reset_tables():
 
 
 def create_tables_if_not_exist():
-    """
-    Membuat tabel ApplicantProfile dan ApplicationDetail jika belum ada di database.
-    """
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('''
@@ -212,7 +193,6 @@ def create_tables_if_not_exist():
     print("Tabel sudah dipastikan ada di database.")
 
 def insert_folder_pdfs_to_mysql(folder_path: str, application_role: str = None):
-    # seeding
     fake = Faker("id_ID") 
     conn = get_connection()
     cursor = conn.cursor()
@@ -222,6 +202,7 @@ def insert_folder_pdfs_to_mysql(folder_path: str, application_role: str = None):
             print(f"Memproses file: {filename} ==================================")
             file_path = os.path.join(folder_path, filename)
 
+            # seeding
             first_name = fake.first_name()
             last_name = fake.last_name()
             address = fake.address().replace('\n', ', ')
@@ -235,7 +216,7 @@ def insert_folder_pdfs_to_mysql(folder_path: str, application_role: str = None):
                 """,
                 (first_name, last_name, date_of_birth, address, phone_number)
             )
-            applicant_id = cursor.lastrowid  # Dapatkan ID hasil insert barusan
+            applicant_id = cursor.lastrowid
 
             cursor.execute(
                 """
@@ -252,9 +233,6 @@ def insert_folder_pdfs_to_mysql(folder_path: str, application_role: str = None):
 
 
 def load_search_data_from_sql() -> list:
-    """
-    Load all applicants and their CV text from SQL, return as list of SearchData.
-    """
     from interface import SearchData
     conn = get_connection()
     cursor = conn.cursor()
@@ -277,9 +255,6 @@ def load_search_data_from_sql() -> list:
 
 
 def get_cv_path_by_id(applicant_id: int) -> str:
-    """
-    Get CV file path for a given applicant id.
-    """
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('''
@@ -294,9 +269,6 @@ def get_cv_path_by_id(applicant_id: int) -> str:
 
 
 def get_summary_by_id(applicant_id: int):
-    """
-    Extract summary info from PDF for a given applicant id.
-    """
     cv_path = get_cv_path_by_id(applicant_id)
     if not cv_path:
         return None
@@ -319,44 +291,7 @@ def get_summary_by_id(applicant_id: int):
 
     return data.nama, data.email, data.phone, data.address, data.skills, data.experience, data.education, data.summary
 
-def seed_applicant_profile(n: int = None):
-    """
-    Seed tabel ApplicantProfile dengan data dummy menggunakan Faker.
-    """
-    fake = Faker(id_ID=True)  # Menggunakan locale Indonesia
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    if n is None:
-        cursor.execute("SELECT COUNT(*) FROM ApplicantProfile")
-        current_count = cursor.fetchone()[0]
-        n = current_count  # default fallback ke 10 jika tabel kosong
-
-    for _ in range(n):
-        first_name = fake.first_name()
-        last_name = fake.last_name()
-        address = fake.address().replace('\n', ', ')
-        phone_number = ''.join(random.choices('0123456789', k=random.randint(8, 15)))
-        email = f"{last_name}{first_name}{random.randint(1,999)}@stimehehe.com"
-
-        # Tanggal lahir random (opsional, jika ingin diisi)
-        date_of_birth = fake.date_of_birth(minimum_age=18, maximum_age=60)
-        cursor.execute(
-            """
-            INSERT INTO ApplicantProfile (first_name, last_name, date_of_birth, address, phone_number)
-            VALUES (%s, %s, %s, %s, %s)
-            """,
-            (first_name, last_name, date_of_birth, address, phone_number)
-        )
-    conn.commit()
-    cursor.close()
-    conn.close()
-    print(f"Berhasil seeding {n} data ke ApplicantProfile.")
-
 def get_cv_count():
-    """
-    Menghitung jumlah CV yang ada di tabel ApplicationDetail.
-    """
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM ApplicationDetail")
