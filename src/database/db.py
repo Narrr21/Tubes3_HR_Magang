@@ -155,7 +155,7 @@ def reset_tables():
     cursor.execute("DELETE FROM EncryptionParameters")
     cursor.execute("DELETE FROM ApplicationDetail")
     cursor.execute("DELETE FROM ApplicantProfile")
-    cursor.execute("DELETE FROM ApplicantProfilePlain")
+    cursor.execute("DELETE FROM ApplicantProfilePlain IF EXISTS")
 
     cursor.execute("ALTER TABLE ApplicationDetail AUTO_INCREMENT = 1")
     cursor.execute("ALTER TABLE ApplicantProfile AUTO_INCREMENT = 1")

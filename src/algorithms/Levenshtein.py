@@ -4,26 +4,27 @@ class Levenshtein:
         pass
 
     def calculate_distance(self, s1: str, s2: str) -> int:
-        len_s1 : int = len(s1)
-        len_s2 : int = len(s2)
+        if len(s1) > len(s2):
+            s1, s2 = s2, s1
 
-        if len_s1 == 0: return len_s2
-        if len_s2 == 0: return len_s1
+        len_s1 = len(s1)
+        len_s2 = len(s2)
+        previous_row = list(range(len_s1 + 1))
 
-        dp : list[list[int]] = [[0] * (len_s2 + 1) for _ in range(len_s1 + 1)]  # contains distance for first i and j characters
-
-        for i in range(len_s1 + 1):
-            dp[i][0] = i
-        
-        for j in range(len_s2 + 1):
-            dp[0][j] = j
-        
-        for i in range(1, len_s1 + 1):
-            for j in range(1, len_s2 + 1):
-                cost = 0 if s1[i-1] == s2[j-1] else 1
-                dp[i][j] = min(dp[i-1][j] + 1, dp[i][j-1] + 1, dp[i-1][j-1] + cost) 
-        
-        return dp[len_s1][len_s2]
+        for i in range(1, len_s2 + 1):
+            current_row = [i]
+            
+            for j in range(1, len_s1 + 1):
+                insertion_cost = current_row[j-1] + 1
+                deletion_cost = previous_row[j] + 1
+                
+                substitution_cost = previous_row[j-1]
+                if s1[j-1] != s2[i-1]:
+                    substitution_cost += 1
+                
+                current_row.append(min(insertion_cost, deletion_cost, substitution_cost))
+            previous_row = current_row
+        return previous_row[len_s1]
 
     def calculate_similarity_percentage(self, s1: str, s2: str) -> float:
         if (len(s1) == 0 and len(s2) == 0) : return 1
