@@ -20,20 +20,9 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import Qt, QStringListModel, QTimer
 from ui.home import Ui_MainWindow
-from ui.summary import Ui_SummaryWindow  # Assuming you have a separate summary UI file
-# from db import get_connection  # Uncomment and implement when ready
-from ui.toast import Toast  # Assuming you have a Toast class for notifications
-from ui.wrapper import Wrapper  # Assuming you have a custom item delegate for list widgets
-# from interface import (
-#     get_summary_data,       # get summary data from database by id
-#     get_file_path,          # get file path of CV from database by id
-#     run_search_algorithm,   # run search algorithm on keywords
-#     add_file,               # add file to database
-#     add_folder,             # add files in folder to database
-#     clear_database,         # clear database
-#     load_database,          # load database info
-#     seed_database,          # seed database with initial data
-# )
+from ui.summary import Ui_SummaryWindow
+from ui.toast import Toast
+from ui.wrapper import Wrapper
 from interface import *
 
 class CVWindow(QDialog):

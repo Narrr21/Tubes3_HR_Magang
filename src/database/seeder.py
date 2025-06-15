@@ -67,7 +67,6 @@ def seed_database():
     with open("src/database/tubes3_seeding.sql", 'r', encoding='utf-8') as f:
         sql_commands = f.read()
 
-    # Koneksi ke database MySQL
     conn = mysql.connector.connect(
         host=DB_HOST,
         user=DB_USER,
