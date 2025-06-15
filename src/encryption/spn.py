@@ -1,5 +1,3 @@
-import os
-
 BLOCK_SIZE = 8  # bytes
 ROUNDS = 4
 
@@ -28,20 +26,17 @@ P_BOX = [6, 4, 7, 0, 5, 2, 1, 3]
 INV_P_BOX = [P_BOX.index(i) for i in range(BLOCK_SIZE)]
 
 def pad(data: bytes) -> bytes:
-    """Pads data to a multiple of BLOCK_SIZE using PKCS#7."""
     padding_len = BLOCK_SIZE - (len(data) % BLOCK_SIZE)
     padding = bytes([padding_len] * padding_len)
     return data + padding
 
 def unpad(data: bytes) -> bytes:
-    """Removes PKCS#7 padding from data."""
     padding_len = data[-1]
     if padding_len > BLOCK_SIZE or not all(p == padding_len for p in data[-padding_len:]):
         raise ValueError("Invalid padding")
     return data[:-padding_len]
 
 def expand_key(key: bytes) -> list[bytes]:
-    """Expands the master key into round keys."""
     round_keys = []
     for i in range(ROUNDS + 1):
         start = (i * BLOCK_SIZE) % len(key)
@@ -90,7 +85,5 @@ def decrypt(ciphertext: bytes, key: bytes) -> str:
             block = bytes(INV_S_BOX[b] for b in block)
         
         block = bytes(a ^ b for a, b in zip(block, round_keys[0]))
-        
         plaintext += block
-        
     return unpad(plaintext).decode()

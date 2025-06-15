@@ -4,9 +4,6 @@ class KMP:
         self.num_occurrences = 0
 
     def compute_lps(self) -> list[int]:
-        """
-        Computes the longest prefix suffix (LPS) array for the pattern.
-        """
         m = len(self.pattern)
         lps = [0] * m
         length = 0
@@ -26,10 +23,6 @@ class KMP:
         return lps
     
     def count_occurence(self, text) -> int:
-        """
-        Searches for occurrences of the pattern in the given text using the KMP.
-        Returns the number of occurrences found.
-        """
         if not self.pattern or not text:
             return 0
             
@@ -39,7 +32,7 @@ class KMP:
         i = 0  # index text
         j = 0  # index pattern
         
-        self.num_occurrences = 0  # Reset
+        self.num_occurrences = 0
         
         while i < n:
             if self.pattern[j] == text[i]:
@@ -58,16 +51,9 @@ class KMP:
         return self.num_occurrences
                     
     def get_num_occurrences(self) -> int:
-        """
-        Returns the number of occurrences of the pattern found in the last search.
-        """
         return self.num_occurrences
 
     def search_position(self, text) -> list[int]:
-        """
-        Finds all starting positions where the pattern occurs in the text.
-        Returns a list of indices.
-        """
         if not self.pattern or not text:
             return []
             
@@ -96,9 +82,6 @@ class KMP:
     
     @staticmethod
     def search_multi_pattern(text, patterns:list[str]) -> dict[str, int]:
-        """
-        Searches for multiple patterns in the text and returns a dictionary with pattern counts.
-        """
         results = {}
         for pattern in patterns:
             kmp = KMP(pattern)

@@ -18,6 +18,20 @@ def decrypt_ecc(C1, cipherkey: bytes):
     plaintext = ecc.decrypt(cipherkey, C1, private_key, curve)
     return plaintext
 
+def encrypt_texts(plaintext: list[str], key: bytes):
+    ciphertexts = []
+    for text in plaintext:
+        ciphertext = spn.encrypt(text, key)
+        ciphertexts.append(ciphertext)
+    return ciphertexts
+
+def decrypt_texts(ciphertexts: list[bytes], key: bytes):
+    plaintexts = []
+    for ciphertext in ciphertexts:
+        plaintext = spn.decrypt(ciphertext, key)
+        plaintexts.append(plaintext)
+    return plaintexts
+
 if __name__ == "__main__":
     # Example usage
 
