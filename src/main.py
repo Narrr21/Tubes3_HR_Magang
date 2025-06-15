@@ -400,7 +400,7 @@ class MainWindow(QMainWindow):
             return "KMP"
         elif self.ui.radioBoyerMoore.isChecked():
             return "BM"
-        elif self.ui.radioAhoCorasick.isChecked():
+        elif self.ui.radiodCorasick.isChecked():
             return "Aho-Corasick"
         return None
 
