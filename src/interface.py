@@ -147,12 +147,11 @@ def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) ->
 
     return results[:limit], round(exact_time, 6), round(fuzzy_time, 6)
 
-def add_file(path_to_file:str, id_applicant: int) -> bool:
+def add_file(path_to_file:str) -> bool:
     """
     Adds a file to the database.
     Args:
         path_to_file (str): The path to the file to be added.
-        id_applicant (int): The ID of the applicant to whom the file belongs.
     Returns:
         bool: True if the file was added successfully, False otherwise.
     """
@@ -160,6 +159,8 @@ def add_file(path_to_file:str, id_applicant: int) -> bool:
         if not os.path.exists(path_to_file):
             raise FileNotFoundError(f"File {path_to_file} does not exist.")
         
+        insert_pdf_to_mysql(path_to_file)
+
         print(f"File {path_to_file} added to the database.")
     except Exception as e:
         print(f"Error adding file: {e}")

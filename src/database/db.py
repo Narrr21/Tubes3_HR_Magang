@@ -195,6 +195,52 @@ def create_tables_if_not_exist():
     conn.close()
     print("Tabel sudah dipastikan ada di database.")
 
+def insert_pdf_to_mysql(file_path: str, application_role: str = None):
+    fake = Faker("id_ID") 
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    if file_path.lower().endswith('.pdf'):
+        print(f"Memproses file: {file_path} ==================================")
+
+        spnkey = os.urandom(32)
+
+        first_name = ENC.encrypt_spn(fake.first_name(), spnkey)
+        last_name = ENC.encrypt_spn(fake.last_name(), spnkey)
+        address = ENC.encrypt_spn(fake.address().replace('\n', ', '), spnkey)
+        phone_number = ENC.encrypt_spn('628' + ''.join(random.choices('0123456789', k=10)), spnkey)
+        date_of_birth = ENC.encrypt_spn(fake.date_of_birth(minimum_age=18, maximum_age=60).strftime("%Y-%m-%d"), spnkey)
+        email = f"{last_name.lower()}.{first_name}@StimeHehe.com"
+
+        cursor.execute(
+            """
+            INSERT INTO ApplicantProfile (first_name, last_name, date_of_birth, address, phone_number)
+            VALUES (%s, %s, %s, %s, %s)
+            """,
+            (first_name, last_name, date_of_birth, address, phone_number)
+        )
+
+        applicant_id = cursor.lastrowid  # Dapatkan ID hasil insert barusan
+        (C1_x, C1_y), SPN_key = ENC.encrypt_ecc(spnkey)
+        cursor.execute(
+            """
+            INSERT INTO EncryptionParameters (applicant_id, C1_x, C1_y, SPN_key) 
+            VALUES (%s, %s, %s, %s)
+            """,
+            (applicant_id, C1_x.to_bytes(32, "big"), C1_y.to_bytes(32, "big"), SPN_key)
+        )
+
+        cursor.execute(
+            """
+            INSERT INTO ApplicationDetail (applicant_id, application_role, cv_path)
+            VALUES (%s, %s, %s)
+            """,
+            (applicant_id, application_role, file_path)
+        )
+    conn.commit()
+    cursor.close()
+    conn.close()
+
 def insert_folder_pdfs_to_mysql(folder_path: str, application_role: str = None):
     fake = Faker("id_ID") 
     conn = get_connection()

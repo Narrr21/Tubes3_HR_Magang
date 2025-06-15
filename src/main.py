@@ -2,7 +2,7 @@ import sys
 import os
 import re
 import pymupdf as fitz
-from datetime import datetime
+import datetime
 from PyQt5.QtWidgets import (
     QApplication, 
     QMainWindow, 
@@ -287,17 +287,6 @@ class MainWindow(QMainWindow):
             QTimer.singleShot(i * interval, lambda s=style: widget.setStyleSheet(s))
         QTimer.singleShot(steps * interval, lambda: widget.setStyleSheet(""))
 
-    def get_id_applicant(self):
-        text = self.ui.inputIDApplicants.text().strip()
-        if not text.isdigit():
-            self.fade_border(self.ui.inputIDApplicants)
-            toast = Toast("Please enter a valid ID applicant", duration=3000, parent=self)
-            toast.show_above(self)
-            return None
-        else:
-            self.ui.inputIDApplicants.setStyleSheet("")
-            return text
-
     
     def handle_upload_button(self):        
         file_path = os.path.basename(self.get_file_path())
@@ -311,13 +300,8 @@ class MainWindow(QMainWindow):
             return
 
         try:
-            now = datetime.now()
+            now = datetime.datetime.now()
             filename = file_path.split("/")[-1]
-            id_applicant = self.get_id_applicant()
-
-            # TODO: Validate id_applicant before proceeding
-            if not id_applicant:
-                return
             
             if not filename.lower().endswith('.pdf'):
                 toast = Toast("Only PDF files are allowed", duration=3000, parent=self)
@@ -326,7 +310,7 @@ class MainWindow(QMainWindow):
                 self.ui.lineEditFilePath.clear()
                 return
             
-            response = add_file(self.get_file_path(), id_applicant)
+            response = add_file(self.get_file_path())
 
             if response:
                 pass
@@ -335,14 +319,13 @@ class MainWindow(QMainWindow):
                 toast.show_above(self)
                 return
 
-            print(f"[UPLOAD] Uploading file: {filename} at {now} by id applicant {id_applicant}")  # DEBUG
+            print(f"[UPLOAD] Uploading file: {filename} at {now}")  # DEBUG
             self.uploaded_cvs.append({
                 "filename": filename,
                 "upload_time": now
             })
 
             self.ui.lineEditFilePath.clear()
-            self.ui.inputIDApplicants.clear()
             print(f"[UPLOAD] File {filename} uploaded successfully at {now}.")  # DEBUG
             toast = Toast("File uploaded successfully", duration=3000, parent=self)
             toast.show_above(self)

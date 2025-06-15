@@ -1,23 +1,78 @@
-# Tubes3_HR_Magang
+# **HR Magang: Sistem ATS Berbasis CV**
 
-## RUN
+Sistem ini merupakan implementasi dari tiga algoritma pencocokan pola klasik untuk memproses dan menganalisis teks secara efisien. Proyek ini dikembangkan untuk memenuhi tugas dalam ranah _Human Resources_ (HR) yang melibatkan penyaringan dan analisis data tekstual.
 
-1. python -m venv venv
-2. venv\Scripts\activate
-3. pip install -r requirements.txt
-4. python .\src\main.py
+## **Penjelasan Singkat Algoritma**
 
-## MAKE GUI
+Proyek ini mengimplementasikan tiga algoritma pencocokan pola yang berbeda, masing-masing dengan kekuatan dan karakteristik uniknya.
 
-1.  & '.\Qt Designer Setup.exe'
-2.  Install and open file window.ui or make new file for other window (Only once, after install just open normally with search bar)
-3.  To build, enter this : pyuic5 src/ui/window.ui -o src/ui/window.py (replace window with your file)
-4.  home.py and summary.py already have adjustment (don't run .ui)
+### **Knuth-Morris-Pratt (KMP)**
+KMP memanfaatkan informasi dari karakter yang sudah cocok sebelumnya untuk melakukan pergeseran yang lebih cerdas dan lebih jauh.
 
-## IF do any pip install
+### **Boyer-Moore (BM)**
+Boyer-Moore memiliki pendekatan yang unik, yaitu melakukan proses pencocokan karakter dari kanan ke kiri pada pola, bukan dari kiri ke kanan seperti kebanyakan algoritma lainnya. Pendekatan ini memungkinkan Boyer-Moore untuk melompati sebagian besar teks dalam sekali pergeseran jika ditemukan mismatch.
 
-1. in root dir, enter : pip freeze > requirements.txt
+### **Aho-Corasick**
+Algoritma Aho-Corasick adalah algoritma string matching yang dirancang untuk mencari semua kemunculan dari sekumpulan pola sekaligus secara bersamaan di dalam sebuah teks.
 
-## DATABASE
+---
 
-WIP
+## **🚀 Kebutuhan & Instalasi Program**
+
+Untuk menjalankan program ini, pastikan lingkungan Anda telah memenuhi persyaratan berikut dan ikuti langkah-langkah instalasi di bawah ini.
+
+### **Prasyarat**
+- **Python 3.x** terinstal di sistem Anda.
+- **MariaDB** atau sistem database lain yang kompatibel dengan **MySQL** (contoh: XAMPP, Laragon, atau instalasi mandiri).
+
+### **Langkah-langkah Instalasi**
+
+1.  **Buat dan Aktifkan Lingkungan Virtual (Virtual Environment):**
+    * Buka terminal atau command prompt di direktori root proyek.
+    * Jalankan perintah berikut untuk membuat lingkungan virtual bernama `venv`:
+        ```bash
+        python -m venv venv
+        ```
+    * Aktifkan lingkungan tersebut:
+        * **Windows:**
+            ```bash
+            .\venv\Scripts\activate
+            ```
+        * **macOS/Linux:**
+            ```bash
+            source venv/bin/activate
+            ```
+
+2.  **Instal Dependensi:**
+    * Pastikan `venv` Anda aktif, lalu instal semua pustaka yang dibutuhkan dari file `requirements.txt`:
+        ```bash
+        pip install -r requirements.txt
+        ```
+
+3.  **Konfigurasi Database:**
+    * Buat sebuah file bernama `.env` di direktori root proyek.
+    * Isi file tersebut dengan detail koneksi database Anda seperti contoh di bawah. Sesuaikan nilainya sesuai dengan konfigurasi lokal Anda.
+
+    ```env
+    # Contoh isi file .env
+    DB_HOST=localhost
+    DB_USER=root
+    DB_PASSWORD=
+    DB_NAME=hr_magang_db
+    ```
+
+4.  **Jalankan Program:**
+    * Setelah semua langkah di atas selesai, jalankan aplikasi utama:
+        ```bash
+        python .\src\main.py
+        ```
+
+---
+
+## **👥 Author**
+
+Proyek ini dengan bangga dikembangkan oleh:
+
+-   **Muhammad Alfansya** - `13523005`
+-   **M. Rayhan Farrukh** - `13523035`
+-   **Nadhif Al Rozin** - `13523076`
