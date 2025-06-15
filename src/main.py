@@ -239,13 +239,13 @@ class MainWindow(QMainWindow):
         self.load_database_info()
 
     def load_database_info(self):
-        response = load_database()
+        response, count = load_database()
         if not response:
             toast = Toast("Failed to load database info", duration=3000, parent=self)
             toast.show_above(self)
             return
 
-        total_cvs = len(self.uploaded_cvs)
+        total_cvs = count
         last_upload = (
             max(self.uploaded_cvs, key=lambda x: x["upload_time"])["upload_time"].strftime("%Y-%m-%d %H:%M:%S")
             if self.uploaded_cvs else "N/A"
