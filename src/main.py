@@ -24,15 +24,17 @@ from ui.summary import Ui_SummaryWindow  # Assuming you have a separate summary 
 # from db import get_connection  # Uncomment and implement when ready
 from ui.toast import Toast  # Assuming you have a Toast class for notifications
 from ui.wrapper import Wrapper  # Assuming you have a custom item delegate for list widgets
-from interface import (
-    get_summary_data,       # get summary data from database by id
-    get_file_path,          # get file path of CV from database by id
-    run_search_algorithm,   # run search algorithm on keywords
-    add_file,               # add file to database
-    add_folder,             # add files in folder to database
-    clear_database,          # clear database
-    load_database          # load database info
-)
+# from interface import (
+#     get_summary_data,       # get summary data from database by id
+#     get_file_path,          # get file path of CV from database by id
+#     run_search_algorithm,   # run search algorithm on keywords
+#     add_file,               # add file to database
+#     add_folder,             # add files in folder to database
+#     clear_database,         # clear database
+#     load_database,          # load database info
+#     seed_database,          # seed database with initial data
+# )
+from interface import *
 
 class CVWindow(QDialog):
     def __init__(self, file_path, parent=None):
@@ -113,7 +115,7 @@ class SummaryWindow(QDialog):
         self.ui.btnViewFullCV.clicked.connect(self.handle_view_cv)
     
     def handle_view_cv(self):
-        file_path = get_file_path(id)
+        file_path = get_file_path(self.id)
 
         cv_window = CVWindow(file_path, self)
         cv_window.show()
@@ -212,9 +214,12 @@ class MainWindow(QMainWindow):
         self.ui.btnViewCV.setEnabled(False)
 
         self.uploaded_cvs = []
+        clear_database()
+        conn = get_connection()  # Initialize database connection
+        seed_database()
+        conn.close()
 
         # Load initial DB info
-        clear_database()
         self.load_database_info()
 
     ## <-----------DATABASE HANDLING----------------------------------------------------------------------------------->
@@ -305,9 +310,7 @@ class MainWindow(QMainWindow):
             return text
 
     
-    def handle_upload_button(self):
-        clear_database()
-        
+    def handle_upload_button(self):        
         file_path = os.path.basename(self.get_file_path())
         if self.ui.checkFolderMode.isChecked():
             self.handle_upload_folder()

@@ -302,9 +302,7 @@ def get_summary_by_id(applicant_id: int):
 
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT email FROM ApplicantProfile WHERE applicant_id = %s', (applicant_id,))
-    row = cursor.fetchone()
-    data.email = row[0] if row else None
+    data.email =  None
 
     cursor.execute('SELECT phone_number FROM ApplicantProfile WHERE applicant_id = %s', (applicant_id,))
     row = cursor.fetchone()

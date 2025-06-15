@@ -183,11 +183,13 @@ def run_search_algorithm(algorithm: str, keyword: list[str], limit: int = 10) ->
         elif (algorithm == "AhoCorasick"):
              res.keywords = AhoCorasick.search_multi_pattern(data.text, keyword)
         exact_time += (time.time() - start_time) * 1000
+        print("[DEBUG] exact time : ===aopiawhfoiawh ", exact_time)
         for key in keyword:
             if res.keywords[key] == 0:
                 start_time = time.time()
                 res.keywords = Levenshtein.search_multi_pattern(data.text, keyword)
                 fuzzy_time += (time.time() - start_time) * 1000
+        print("[DEBUG] fuzzy time : ===aopiawhfoiawh ", fuzzy_time)
         if sum(res.keywords.values()) > 0:
             results.append(res)
 
@@ -264,7 +266,6 @@ def clear_database() -> bool:
     try:
         # TODO: Implement the logic to clear the database
         reset_tables()
-        seed_database()
         return True
     except Exception as e:
         print(f"Error clearing database: {e}")
