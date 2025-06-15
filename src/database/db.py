@@ -322,13 +322,23 @@ def get_summary_by_id(applicant_id: int):
     cursor = conn.cursor()
     data.email =  None
 
+    cursor.execute('''
+        SELECT enc.C1_x, enc.C1_y, enc.SPN_key
+        FROM EncryptionParameters enc WHERE enc.applicant_id = %s
+        ''', (applicant_id,))
+
+    enc_params = cursor.fetchall()
+    key = None
+    if enc_params:
+        key = ENC.decrypt_key_from_id(enc_params[0])
+
     cursor.execute('SELECT phone_number FROM ApplicantProfile WHERE applicant_id = %s', (applicant_id,))
     row = cursor.fetchone()
-    data.phone = row[0] if row else None
+    data.phone = ENC.decrypt_spn(row[0], key) if row else None
 
     cursor.execute('SELECT address FROM ApplicantProfile WHERE applicant_id = %s', (applicant_id,))
     row = cursor.fetchone()
-    data.address = row[0] if row else None
+    data.address = ENC.decrypt_spn(row[0], key) if row else None
 
     cursor.close()
     conn.close()
