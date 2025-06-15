@@ -2,7 +2,7 @@ import sys
 import os
 import re
 import pymupdf as fitz
-from datetime import datetime
+import datetime
 from PyQt5.QtWidgets import (
     QApplication, 
     QMainWindow, 
@@ -322,7 +322,7 @@ class MainWindow(QMainWindow):
             return
 
         try:
-            now = datetime.now()
+            now = datetime.datetime.now()
             filename = file_path.split("/")[-1]
             id_applicant = self.get_id_applicant()
 

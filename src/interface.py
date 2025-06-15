@@ -223,7 +223,8 @@ def add_file(path_to_file:str, id_applicant: int) -> bool:
             raise FileNotFoundError(f"File {path_to_file} does not exist.")
         
         # TODO: Implement the logic to add the file to the database
-        
+        insert_pdf_to_mysql(path_to_file)
+
         print(f"File {path_to_file} added to the database.")
     except Exception as e:
         print(f"Error adding file: {e}")
