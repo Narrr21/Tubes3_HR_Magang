@@ -3,7 +3,6 @@ from PyQt5.QtCore import Qt, QPropertyAnimation, QTimer, QPoint, pyqtSignal
 from PyQt5.QtGui import QFont
 
 class ToastManager:
-    """Manages multiple toast instances to prevent overlapping"""
     _instance = None
     
     def __new__(cls):
@@ -14,18 +13,15 @@ class ToastManager:
         return cls._instance
     
     def add_toast(self, toast):
-        """Add a new toast and position it correctly"""
         self.active_toasts.append(toast)
         self._position_toast(toast)
     
     def remove_toast(self, toast):
-        """Remove toast and reposition remaining ones"""
         if toast in self.active_toasts:
             self.active_toasts.remove(toast)
             self._reposition_all_toasts()
     
     def _position_toast(self, new_toast):
-        """Position a single toast considering existing ones"""
         if len(self.active_toasts) == 1:
             # First
             new_toast.move(new_toast.target_x, new_toast.base_y)
@@ -42,7 +38,6 @@ class ToastManager:
             new_toast.move(new_toast.target_x, new_y)
     
     def _reposition_all_toasts(self):
-        """Reposition all remaining toasts to remove gaps"""
         current_y = None
         for toast in self.active_toasts:
             if toast.isVisible():
@@ -73,7 +68,6 @@ class Toast(QWidget):
             }
         """)
 
-        # Create layout and label
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 15, 20, 15)
         
@@ -110,7 +104,6 @@ class Toast(QWidget):
         self.duration = duration
 
     def show_above(self, parent_widget):
-        """Show toast above parent widget"""
         if not parent_widget:
             return
             
@@ -131,18 +124,14 @@ class Toast(QWidget):
             self.auto_close_timer.start(self.duration)
 
     def start_fade_out(self):
-        """Start fade-out animation"""
         self.auto_close_timer.stop()
         self.fade_out_animation.start()
 
     def _force_close(self):
-        """Force close the toast"""
         self.closing.emit()
         self.close()
 
     def closeEvent(self, event):
-        """Clean up when closing"""
-        # Stop timers and animations
         if hasattr(self, 'auto_close_timer'):
             self.auto_close_timer.stop()
         if hasattr(self, 'fade_in_animation'):
@@ -150,32 +139,23 @@ class Toast(QWidget):
         if hasattr(self, 'fade_out_animation'):
             self.fade_out_animation.stop()
             
-        # Remove
         if hasattr(self, 'manager'):
             self.manager.remove_toast(self)
             
         super().closeEvent(event)
 
     def mousePressEvent(self, event):
-        """Click to close"""
         if event.button() == Qt.LeftButton:
             self.start_fade_out()
         super().mousePressEvent(event)
 
+# TESTING FUNCTIONS
 def show_toast(parent_widget, message, duration=3000):
-    """
-    Show a stacking toast notification for testing purposes.
-    Args:
-        parent_widget: Widget to show toast above
-        message: Message to display
-        duration: Auto-close duration in ms (0 = manual close only)
-    """
     toast = Toast(message, duration, parent_widget)
     toast.show_above(parent_widget)
     return toast
 
 def test_toasts(parent_widget):
-    """Test function to show multiple toasts"""
     messages = [
         "First toast message",
         "Second toast - should be below first",
