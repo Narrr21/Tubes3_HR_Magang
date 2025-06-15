@@ -64,13 +64,12 @@ class BM:
     @staticmethod
     def search_multi_pattern(text: str, patterns: list[str]) -> dict[str, int]:
         results: dict[str, int] = {}    # stores pattern, occurence
-        if not text or not patterns: return results
+        if not text or not patterns: return {pattern: 0 for pattern in patterns}
 
         for pattern in patterns:
-            bm : object = BM(pattern)
+            bm: object = BM(pattern)
             num_occurrences = bm.count_occurrence(text)
-            results[pattern] = num_occurrences
-        return results
+            results[pattern] = num_occurrences if num_occurrences > 0 else 0
 
 import unittest
 
