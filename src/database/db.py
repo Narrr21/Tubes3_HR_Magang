@@ -129,23 +129,27 @@ DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_NAME = os.getenv("DB_NAME")
 
 def get_connection():
-    temp_conn = mysql.connector.connect(
-        host= DB_HOST,
-        user = DB_USER,
-        password = DB_PASSWORD,
-    )
-    temp_cursor = temp_conn.cursor()
-    temp_cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
-    temp_conn.commit()
-    temp_cursor.close()
-    temp_conn.close()
+    try :
+        temp_conn = mysql.connector.connect(
+            host= DB_HOST,
+            user = DB_USER,
+            password = DB_PASSWORD,
+        )
+        temp_cursor = temp_conn.cursor()
+        temp_cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
+        temp_conn.commit()
+        temp_cursor.close()
+        temp_conn.close()
 
-    return mysql.connector.connect(
-        host= DB_HOST,
-        user = DB_USER,
-        password = DB_PASSWORD,
-        database=DB_NAME
-    )
+        return mysql.connector.connect(
+            host= DB_HOST,
+            user = DB_USER,
+            password = DB_PASSWORD,
+            database=DB_NAME
+        )
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return None
 
 def reset_tables():
     conn = get_connection()
