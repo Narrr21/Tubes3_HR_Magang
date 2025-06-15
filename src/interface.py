@@ -271,7 +271,7 @@ def clear_database() -> bool:
         print(f"Error clearing database: {e}")
         return False
 
-def load_database() -> bool:
+def load_database() -> tuple[bool, int]:
     """
     Loads the database.
     Returns:
@@ -281,7 +281,7 @@ def load_database() -> bool:
         # TODO: Implement the logic to load the database
         create_tables_if_not_exist()
         print("Database loaded successfully.")
-        return True
+        return True, get_cv_count()
     except Exception as e:
         print(f"Error loading database: {e}")
-        return False
+        return False, 0
