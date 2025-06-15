@@ -5,6 +5,7 @@ import re
 import os
 from faker import Faker
 import os
+import encryption.encryption as ENC
 
 import mysql.connector
 import dotenv
@@ -259,18 +260,33 @@ def load_search_data_from_sql() -> list:
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT ap.applicant_id, CONCAT(ap.first_name, ' ', ap.last_name), ad.cv_path
+        SELECT ap.applicant_id, ap.first_name, ap.last_name, ad.cv_path
         FROM ApplicantProfile ap
         JOIN ApplicationDetail ad ON ap.applicant_id = ad.applicant_id
     ''')
     result = []
-    for row in cursor.fetchall():
-        app_id, name, cv_path = row
+    rows = cursor.fetchall()
+
+   
+    for row in rows:
+        app_id, firstname, lastname, cv_path = row
+
+        cursor.execute('''
+            SELECT enc.C1_x, enc.C1_y, enc.SPN_key
+            FROM EncryptionParameters enc WHERE enc.applicant_id = %s
+            ''', (app_id,))
+
+        enc_params = cursor.fetchall()
+        if enc_params:
+            key = ENC.decrypt_key_from_id(enc_params[0])
+            firstname = ENC.decrypt_spn(firstname, key)
+            lastname = ENC.decrypt_spn(lastname, key)
+
         try:
             text = extract_text_from_pdf(cv_path)
         except Exception:
             text = ''
-        result.append(SearchData(id=app_id, name=name, text=text))
+        result.append(SearchData(id=app_id, name=f"{firstname} {lastname}", text=text))
     cursor.close()
     conn.close()
     return result

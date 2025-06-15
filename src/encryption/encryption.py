@@ -24,6 +24,13 @@ def encrypt_spn(plaintext: str, key: bytes):
 def decrypt_spn(ciphertext: bytes, key: bytes):
     return spn.decrypt(ciphertext, key)
 
+def decrypt_key_from_id(row):
+    C1_x, C1_y, cipherkey = row
+    C1_x = int.from_bytes(C1_x, "big")
+    C1_y = int.from_bytes(C1_y, "big")
+    key = decrypt_ecc((C1_x, C1_y), cipherkey)
+    return key
+
 # if __name__ == "__main__":
 #     # Example usage
 
